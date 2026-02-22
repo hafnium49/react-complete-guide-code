@@ -10,11 +10,21 @@
     <!-- This div is the mount point for the entire React application.
          React takes control of this element and renders all UI inside it. -->
     <div id="root"></div>
-    <!-- Vite loads the application entry point as an ES module.
+    <!-- This is the only HTML file in the project. You rarely edit it
+         directly — almost all development happens in the src/ folder,
+         inside .jsx files.
+
+         Vite loads the application entry point as an ES module.
          During development, Vite intercepts this request and transforms
          the JSX on the fly before sending valid JavaScript to the browser.
+         It also injects additional scripts and styles (e.g., CSS imports)
+         into the page's <head>. You can observe this by opening browser
+         DevTools: the served page will contain extra <script> and <style>
+         tags that don't appear in this source file.
+
          In a production build, Vite compiles and bundles everything ahead
-         of time into optimized static assets. -->
+         of time into optimized static assets — the final JavaScript no
+         longer contains any JSX or CSS imports, just standard browser code. -->
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

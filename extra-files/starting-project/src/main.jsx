@@ -9,7 +9,15 @@
 // them into the node_modules folder.
 import React from 'react'
 import ReactDOM from 'react-dom/client'
+// The App component is imported from a sibling .jsx file. Most of the
+// development work happens in the src/ folder, inside .jsx files like this.
 import App from './App'
+
+// Importing a CSS file directly into a JavaScript file is not something
+// browsers support natively. The build tool (Vite) detects this import and
+// injects the CSS into the final page automatically — you can verify this
+// by opening browser DevTools and inspecting the <head> element, where
+// you'll find the styles from index.css injected as a <style> tag.
 import './index.css'
 
 // React renders the entire application into a single DOM element (the "root").

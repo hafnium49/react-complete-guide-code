@@ -1,3 +1,9 @@
+/* This file is imported into main.jsx via a standard JavaScript import
+   statement. Browsers do not natively support importing CSS into JS, but
+   the build tool handles it: during development Vite injects these styles
+   into the page's <head> as a <style> tag, and in production builds it
+   extracts them into an optimized CSS file. */
+
 * {
   box-sizing: border-box;
 }

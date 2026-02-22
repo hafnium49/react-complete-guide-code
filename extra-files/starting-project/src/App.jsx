@@ -22,6 +22,10 @@
 // of the UI lives alongside the logic that drives it. React and the
 // build tools (Vite, in this project) transform JSX into regular
 // JavaScript that the browser can execute.
+//
+// If you inspect the served JavaScript in your browser's DevTools, you
+// will not see the <h1> tag below — it will have been transformed into
+// raw JavaScript function calls that produce the same DOM output.
 function App() {
   return <h1>Hello World!</h1>;
 }
