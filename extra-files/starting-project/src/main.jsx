@@ -37,8 +37,8 @@ import './index.css'
 //
 // The <App /> tag is how we use our own component in JSX — custom components
 // are written as functions (see App.jsx) and can then be embedded in JSX
-// just like regular HTML elements. Since App returns an <h1>, what ultimately
-// gets rendered into the root element is that <h1>Hello World!</h1>.
+// just like regular HTML elements. App is the single root component; it
+// in turn renders other components (like Post), building the full UI tree.
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <App />

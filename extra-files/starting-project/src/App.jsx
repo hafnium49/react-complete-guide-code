@@ -57,10 +57,44 @@ import Post from './components/Post';
 // tree. Every other component is ultimately rendered because App (or one
 // of its descendants) includes it in its JSX output.
 function App() {
-  // Using <Post /> here tells React to execute the Post function, take
-  // the JSX it returns (a <div> with two <p> tags), and render that
-  // markup inside whatever App itself is rendered into.
-  return <Post />;
+  // --- Reusing Components ---
+  //
+  // A component can be used as many times as you like. Each usage causes
+  // React to execute the component function independently, so each
+  // instance has its own execution context. That is why each <Post />
+  // below may display a different random name — the function runs
+  // separately for every occurrence.
+  //
+  // Components you use only once (e.g., a site-wide navigation bar)
+  // still benefit from being separate components, because they keep
+  // related logic isolated in one place.
+
+  // --- JSX Rule: Single Root Element ---
+  //
+  // A component's return statement must produce exactly ONE root JSX
+  // element. Sibling elements (like multiple <Post /> tags) cannot be
+  // returned side by side without a wrapper. That wrapper can be any
+  // HTML element (here <main> is a good semantic choice for page
+  // content). If no HTML element makes sense, React also accepts empty
+  // tags (<>...</>) called a "Fragment" as a wrapper that produces no
+  // extra DOM node.
+
+  // --- Self-Closing Tags ---
+  //
+  // In JSX, every element must be explicitly closed. If an element has
+  // no children (no content between opening and closing tags), you can
+  // write it as a self-closing tag: <Post />. Writing it as a void tag
+  // without the slash (<Post>) is NOT allowed and will cause an error.
+  // This rule applies to both custom components and built-in HTML
+  // elements (e.g., <img />, <br />, <input />).
+  return (
+    <main>
+      <Post />
+      <Post />
+      <Post />
+      <Post />
+    </main>
+  );
 }
 
 // Exporting the component makes it available for import in other files.
