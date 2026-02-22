@@ -34,16 +34,33 @@
 // element (e.g., <App />). That is exactly what happens in main.jsx,
 // where <App /> is passed to render().
 
-// This is the App component — currently the only custom component in the
-// project. It returns a single <h1> element, which is why "Hello World!"
-// appears on screen. As the project grows, more components will be
-// created and composed together inside (or alongside) this one.
+// --- Using Custom Components in JSX ---
 //
-// If you inspect the served JavaScript in your browser's DevTools, you
-// will not see the <h1> tag below — it will have been transformed into
-// raw JavaScript function calls that produce the same DOM output.
+// To use a component defined in another file, you import it and then
+// reference it in JSX as if it were an HTML element. The import path is
+// relative and the file extension (.jsx) should be omitted.
+//
+// Behind the scenes, React executes the component function for you,
+// takes the JSX it returns, and generates the appropriate browser
+// instructions to render it on screen. You never call the function
+// yourself with parentheses — you always use the <ComponentName /> syntax.
+import Post from './components/Post';
+
+// --- Root Component ---
+//
+// In a typical React application there is one "root" component that is
+// rendered in main.jsx. All other components are used inside (or nested
+// within) this root component. Here, App is that root component.
+//
+// The App component does not sit in the components/ folder because it
+// serves a special role as the top-level entry point of the component
+// tree. Every other component is ultimately rendered because App (or one
+// of its descendants) includes it in its JSX output.
 function App() {
-  return <h1>Hello World!</h1>;
+  // Using <Post /> here tells React to execute the Post function, take
+  // the JSX it returns (a <div> with two <p> tags), and render that
+  // markup inside whatever App itself is rendered into.
+  return <Post />;
 }
 
 // Exporting the component makes it available for import in other files.
