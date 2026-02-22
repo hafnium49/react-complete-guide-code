@@ -10,7 +10,11 @@
     <!-- This div is the mount point for the entire React application.
          React takes control of this element and renders all UI inside it. -->
     <div id="root"></div>
-    <!-- Vite loads the application entry point as an ES module. -->
+    <!-- Vite loads the application entry point as an ES module.
+         During development, Vite intercepts this request and transforms
+         the JSX on the fly before sending valid JavaScript to the browser.
+         In a production build, Vite compiles and bundles everything ahead
+         of time into optimized static assets. -->
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

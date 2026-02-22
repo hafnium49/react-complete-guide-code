@@ -1,4 +1,7 @@
 // This is the entry point of the React application.
+// This .jsx file extension signals that the file contains JSX syntax,
+// which the build tool (Vite) must transform into valid JavaScript
+// before it reaches the browser.
 // React itself is the core library, while ReactDOM provides the glue
 // between React components and the browser's DOM.
 import React from 'react'
