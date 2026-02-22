@@ -8,12 +8,24 @@
 // is not understood by browsers. A build tool compiles/transforms JSX into
 // standard JavaScript that the browser can execute.
 //
-// Vite serves as that build tool here. During development, it provides:
-//   1. A live-preview dev server that automatically reloads when you change code
-//   2. On-the-fly JSX transformation so the browser receives valid JavaScript
+// --- Project creation ---
 //
-// For production, "vite build" compiles and bundles everything into optimized
-// static files that can be deployed to any hosting provider.
+// This project was scaffolded using Vite (via "npm create vite"), selecting
+// the "React" template with JavaScript. An older alternative is Create React
+// App (via "npx create-react-app"), which serves a similar purpose.
+// Both tools generate a ready-to-use project structure with built-in
+// JSX compilation and a live-reloading dev server.
+//
+// Node.js must be installed on your system — not because you write Node.js
+// code, but because the build tools and the dev server run on it internally.
+//
+// --- Development workflow ---
+//
+// After creating the project, run "npm install" once to fetch third-party
+// packages. Then use the scripts defined in package.json:
+//   "npm run dev"     — start the Vite dev server with auto-reload
+//   "npm run build"   — compile and bundle for production deployment
+//   "npm run preview" — locally preview the production build
 
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'

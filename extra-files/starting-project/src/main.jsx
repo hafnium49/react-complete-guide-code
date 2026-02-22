@@ -4,6 +4,9 @@
 // before it reaches the browser.
 // React itself is the core library, while ReactDOM provides the glue
 // between React components and the browser's DOM.
+// These packages (react, react-dom) were installed by "npm install",
+// which reads the dependencies listed in package.json and downloads
+// them into the node_modules folder.
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
