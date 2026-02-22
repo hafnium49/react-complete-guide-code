@@ -7,6 +7,9 @@ import App from './App'
 import './index.css'
 
 // React renders the entire application into a single DOM element (the "root").
+// Rather than imperatively manipulating individual DOM nodes yourself,
+// you hand React a root element and let it declaratively manage everything
+// inside it based on the component tree you define (starting with <App />).
 // React.StrictMode is a development helper that highlights potential issues.
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
