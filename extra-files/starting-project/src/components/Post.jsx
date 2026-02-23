@@ -16,41 +16,51 @@
 // IS required in Vite projects so the build tool knows the file contains JSX.
 // (Create React App projects also accept plain .js for JSX files.)
 
-// Data defined outside the component function is created once and shared
-// across all renders. This array holds two possible author names.
-const names = ['Maximilian', 'Manuel'];
-
 // This Post component represents a single post (tweet-like item) in the
 // demo application.
+//
+// --- Props (Properties) ---
+//
+// Props are React's mechanism for passing data from a parent component
+// into a child component — similar to how you pass arguments to a regular
+// JavaScript function. The difference is that with components, you set
+// the values using HTML-attribute-like syntax in JSX (e.g.,
+// <Post author="Max" body="Hello" />) and React collects ALL of those
+// custom attributes into a single object that it passes as the first
+// (and only) parameter of your component function.
+//
+// The parameter is conventionally named "props", but the name is your
+// choice. Whatever custom attribute names you set on the component
+// (author, body, etc.) become keys on this object, so you access them
+// as props.author, props.body, and so on.
+//
+// Not every component needs props — some components are self-contained
+// and always render the same content. But props are essential whenever
+// you want to reuse a component with different data (e.g., different
+// post authors and text coming from a database).
 //
 // A component function is still a regular JavaScript function — you can
 // run any standard JavaScript code inside it (variables, calculations,
 // API calls, etc.) before the return statement. The only requirement is
 // that the function ultimately returns JSX.
-function Post() {
-  // Standard JavaScript logic inside a component: Math.random() is a
-  // built-in browser API, not a React feature. Every time React renders
-  // this component (e.g., on page reload), the function executes again
-  // and a new random name is picked.
-  const chosenName = Math.random() > 0.5 ? names[0] : names[1];
-
+function Post(props) {
   // --- Dynamic values in JSX with curly braces ---
   //
   // Wrapping a JavaScript expression in single curly braces { } inside
   // JSX tells React to evaluate that expression and output its result.
-  // Without curly braces, text is rendered literally (e.g., "chosenName"
-  // would appear as the string "chosenName"). With curly braces, React
-  // looks up the variable and inserts its current value instead.
+  // Without curly braces, text is rendered literally (e.g., "props.author"
+  // would appear as the string "props.author"). With curly braces, React
+  // evaluates the expression and inserts its current value instead.
   //
   // You can place any valid JavaScript expression inside the braces:
   // variables, constants, arithmetic ({2 + 2} renders "4"), function
-  // calls, ternary operators, etc. This is how you make React UIs
-  // dynamic — whether displaying random values, computed results, or
-  // data fetched from a backend API.
+  // calls, ternary operators, property access (props.author), etc.
+  // This is how you make React UIs dynamic — whether displaying prop
+  // values, computed results, or data fetched from a backend API.
   return (
     <div>
-      <p>{chosenName}</p>
-      <p>React.js is awesome!</p>
+      <p>{props.author}</p>
+      <p>{props.body}</p>
     </div>
   );
 }

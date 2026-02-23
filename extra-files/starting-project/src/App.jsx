@@ -61,13 +61,21 @@ function App() {
   //
   // A component can be used as many times as you like. Each usage causes
   // React to execute the component function independently, so each
-  // instance has its own execution context. That is why each <Post />
-  // below may display a different random name — the function runs
-  // separately for every occurrence.
+  // instance has its own execution context.
   //
   // Components you use only once (e.g., a site-wide navigation bar)
   // still benefit from being separate components, because they keep
   // related logic isolated in one place.
+
+  // --- Passing Props ---
+  //
+  // Props are set on a component using an HTML-attribute-like syntax.
+  // Each attribute name becomes a key on the props object received by
+  // the component function. Here, the first Post receives
+  // { author: "Maximilian", body: "React.js is awesome!" } and the
+  // second receives { author: "Manuel", body: "Check out the full course!" }.
+  // This is how you configure the same component with different data —
+  // much like calling the same function with different arguments.
 
   // --- JSX Rule: Single Root Element ---
   //
@@ -89,10 +97,8 @@ function App() {
   // elements (e.g., <img />, <br />, <input />).
   return (
     <main>
-      <Post />
-      <Post />
-      <Post />
-      <Post />
+      <Post author="Maximilian" body="React.js is awesome!" />
+      <Post author="Manuel" body="Check out the full course!" />
     </main>
   );
 }
