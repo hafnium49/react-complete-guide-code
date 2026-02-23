@@ -1,0 +1,75 @@
+/* --- CSS Modules ---
+ *
+ * This file uses the CSS Modules convention, indicated by the ".module.css"
+ * suffix in the filename. That suffix is what tells the build tool (Vite or
+ * Create React App) to enable CSS Modules processing for this file.
+ *
+ * How CSS Modules work:
+ *   1. You write normal CSS with class selectors (.post, .author, .text).
+ *   2. When you import this file in a JSX file using the named import syntax
+ *      (e.g., import classes from './Post.module.css'), the build tool
+ *      transforms every class name into a guaranteed-unique string.
+ *   3. The import gives you a JavaScript object where each key is the
+ *      original class name you wrote (post, author, text) and each value
+ *      is the transformed unique class name.
+ *   4. You then use that object in JSX: className={classes.post}
+ *
+ * Why use CSS Modules?
+ *   - Global CSS class names can clash in larger projects. If two different
+ *     components both define a ".post" class in separate global CSS files,
+ *     one will override the other.
+ *   - CSS Modules scope styles to the component that imports them, because
+ *     the generated class names are unique per file.
+ *   - You can verify this by inspecting the rendered HTML in DevTools: the
+ *     class names will look something like "_post_a1b2c_1" rather than
+ *     just "post".
+ *
+ * Alternatives (not used here):
+ *   - Inline styles via the style attribute, which accepts a JavaScript
+ *     object (e.g., style={{ color: 'red', textAlign: 'left' }}). Note
+ *     the double curly braces: the outer pair is the JSX expression
+ *     syntax, the inner pair is the JS object literal.
+ *   - Global CSS classes in index.css, assigned via the className attribute.
+ *     (In JSX, the HTML "class" attribute is written as "className" because
+ *     "class" is a reserved keyword in JavaScript.)
+ *
+ * Convention: place the .module.css file next to its component's .jsx file
+ * in the same folder. This is not technically required but keeps related
+ * files together.
+ */
+
+.post {
+  margin: 1rem 0;
+  padding: 1rem;
+  background-color: #9c7eee;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+  animation: animate-in 1s ease-out forwards;
+}
+
+.author {
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: #543280;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.text {
+  white-space: pre-wrap;
+  font-size: 1.25rem;
+  margin: 0.25rem 0 0 0;
+  color: #593884;
+  font-style: italic;
+}
+
+@keyframes animate-in {
+  from {
+    opacity: 0;
+    transform: translateY(1rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
