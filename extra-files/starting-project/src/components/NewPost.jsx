@@ -1,47 +1,30 @@
 // This component renders a form for creating a new post. It demonstrates
 // that components can contain standard HTML form elements (textarea, input,
 // label) alongside the React-specific conventions we've already seen.
-//
-// This form will eventually be used to add new posts to the list. For now,
-// it is rendered above the posts list as a stepping stone — the next
-// lessons will connect typing in this form to updating the displayed posts,
-// which introduces the concept of "state".
 
-// --- Lifting State Up (this component's role) ---
+// --- Moving State Back Down ---
 //
-// Previously, this component held its own state (via useState) for the
-// textarea value. However, the state was needed in a SIBLING component
-// (Post, via PostsList) — not here. React's data flow is one-directional
-// (parent → child via props), so a child cannot directly share state with
-// a sibling.
+// Previously the enteredBody and enteredAuthor state was "lifted up" to
+// PostsList so that a sibling Post component could display the live
+// values. That approach is no longer needed because the posts will be
+// rendered from a dynamic list rather than wired to individual state
+// variables. The form input state has therefore moved BACK into NewPost
+// — the component where the input events actually occur.
 //
-// The solution is "lifting state up": move the state to the nearest
-// common ancestor that has access to BOTH the component where the event
-// occurs (NewPost) and the component that needs the data (Post). In this
-// case, that ancestor is PostsList.
-//
-// After lifting, NewPost no longer owns any state. Instead, it receives
-// handler functions from its parent via props (onBodyChange,
-// onAuthorChange) and forwards them to the native onChange events on
-// <textarea> and <input>. This is possible because functions are regular
-// JavaScript values — they can be passed through props just like strings
-// or numbers.
+// This illustrates an important principle: state should live as CLOSE as
+// possible to the code that uses it. When multiple components needed the
+// values, lifting up was correct. Now that only NewPost needs them (to
+// bundle and submit), keeping them here avoids unnecessary props and
+// re-renders in the parent.
+
+import { useState } from 'react';
 
 import classes from './NewPost.module.css';
 
-// --- Switching from props.xyz to Object Destructuring ---
-//
-// Previously this function used the props parameter and accessed
-// values with props.onBodyChange, props.onAuthorChange, etc.
-// Destructuring extracts those properties directly in the parameter
-// list, making each usage shorter and making the component's expected
-// props visible at a glance. This is the same technique used in Modal
-// and PostsList — it is purely a readability preference, not a
-// behavioral change.
-//
-// The new onCancel prop receives a function that closes the modal.
-// It will be wired to the cancel button's onClick event below.
-function NewPost({ onBodyChange, onAuthorChange, onCancel }) {
+// onCancel closes the modal. onAddPost (added in a future lesson) will
+// pass the collected form data up to PostsList so it can be added to
+// the posts array.
+function NewPost({ onCancel }) {
   // --- htmlFor (not for) ---
   //
   // Just as the HTML "class" attribute becomes "className" in JSX,
@@ -52,23 +35,74 @@ function NewPost({ onBodyChange, onAuthorChange, onCancel }) {
   // These two — className and htmlFor — are the most common attribute
   // name differences between HTML and JSX. Most other HTML attributes
   // keep their original names.
+
+  // The form input state now lives here again. Because only NewPost
+  // needs these values (to collect them on submit), there is no reason
+  // to lift them to a parent. Keeping state local avoids unnecessary
+  // prop drilling and limits re-renders to this component alone.
+  const [enteredBody, setEnteredBody] = useState('');
+  const [enteredAuthor, setEnteredAuthor] = useState('');
+
+  function bodyChangeHandler(event) {
+    setEnteredBody(event.target.value);
+  }
+
+  function authorChangeHandler(event) {
+    setEnteredAuthor(event.target.value);
+  }
+
+  // --- Handling Form Submission ---
+  //
+  // The onSubmit prop on a <form> element listens for the browser's
+  // native submit event. This event fires when the user clicks a
+  // submit button or presses Enter inside a form field.
+  //
+  // The handler receives the standard event object. The FIRST thing
+  // we do is call event.preventDefault(). Without this call, the
+  // browser would follow its default behavior: generate an HTTP
+  // request and send it to the server hosting the page. That would
+  // reload the page and lose all React state. Since React is a
+  // client-side library, we handle the data in JavaScript instead.
+  //
+  // After preventing the default, we bundle the current state values
+  // into a plain JavaScript object (postData). This object can then
+  // be passed to a parent via a callback prop, stored in a list, or
+  // sent to an API — whatever the application requires.
+  //
+  // Finally, we call onCancel() to close the modal. onCancel is a
+  // prop that holds a function (ultimately App's hideModalHandler).
+  // Calling it here means: "I'm done submitting — close the form."
+  // This is possible because props that hold functions can be
+  // INVOKED, not just forwarded to event listeners.
+  function submitHandler(event) {
+    event.preventDefault();
+    const postData = {
+      body: enteredBody,
+      author: enteredAuthor,
+    };
+    console.log(postData);
+    onCancel();
+  }
+
   return (
-    <form className={classes.form}>
+    // --- The onSubmit Event on <form> ---
+    //
+    // Attaching submitHandler to the form's onSubmit (rather than to
+    // the button's onClick) is the recommended pattern. It captures
+    // ALL ways a form can be submitted — clicking the submit button
+    // OR pressing Enter in a text field — in one place.
+    <form className={classes.form} onSubmit={submitHandler}>
       <p>
         <label htmlFor="body">Text</label>
-        {/* The handler function received via onBodyChange (destructured
-            from props) is passed directly to onChange. When the change
-            event fires, React calls this function with the event object —
-            the same object that PostsList's bodyChangeHandler will
-            receive. This is how a parent component can react to events
-            that happen inside a child component's JSX. */}
-        <textarea id="body" required rows={3} onChange={onBodyChange} />
+        {/* onChange fires on every keystroke, updating enteredBody
+            via the state updater. The required attribute provides
+            basic browser-native validation — the form cannot be
+            submitted while this field is empty. */}
+        <textarea id="body" required rows={3} onChange={bodyChangeHandler} />
       </p>
       <p>
         <label htmlFor="name">Your name</label>
-        {/* Same pattern for the author input — the handler function is
-            passed in from the parent via onAuthorChange. */}
-        <input type="text" id="name" required onChange={onAuthorChange} />
+        <input type="text" id="name" required onChange={authorChangeHandler} />
       </p>
       {/* --- Buttons Inside a Form ---
 
@@ -79,8 +113,7 @@ function NewPost({ onBodyChange, onAuthorChange, onCancel }) {
 
           In a React application we typically handle form data entirely
           on the client side, so we do NOT want the browser's default
-          submission. (Preventing it will be handled in a later lesson
-          when we add an onSubmit handler to the form.)
+          submission — that is why submitHandler calls preventDefault().
 
           To stop a specific button from triggering submission at all,
           set its type attribute to "button". A plain type="button"
@@ -98,10 +131,6 @@ function NewPost({ onBodyChange, onAuthorChange, onCancel }) {
         <button type="button" onClick={onCancel}>
           Cancel
         </button>
-        {/* type="submit" is the default for buttons in a form, so it
-            could be omitted. Including it explicitly makes the intent
-            clear. Clicking this button will trigger the form's submit
-            event (handled in a future lesson). */}
         <button>Submit</button>
       </p>
     </form>
