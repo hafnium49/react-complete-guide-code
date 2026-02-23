@@ -59,9 +59,11 @@
 
 import classes from './Modal.module.css';
 
-// Using destructuring here: { children } extracts the children prop
-// directly, so we can write {children} instead of {props.children}.
-function Modal({ children }) {
+// Destructuring now extracts two props: children (the wrapped content)
+// and onClose (a handler function passed by the parent). Destructuring
+// multiple props at once makes the component's "API" easy to see at a
+// glance — you know immediately which props this component expects.
+function Modal({ children, onClose }) {
   // --- The HTML <dialog> Element ---
   //
   // <dialog> is a built-in HTML element designed specifically for modal
@@ -86,7 +88,15 @@ function Modal({ children }) {
   // sits behind the dialog to dim the rest of the page.
   return (
     <>
-      <div className={classes.backdrop} />
+      {/* Clicking the backdrop should close the modal. The onClose
+          function was passed in by the parent (PostsList) — it calls
+          setModalIsVisible(false) to update PostsList's state. By
+          attaching it to onClick here, we connect a user interaction
+          in the child (Modal) to a state change in the parent. This
+          is the same lifted-state pattern used elsewhere: the event
+          happens in the child, the state lives in the parent, and a
+          handler function bridges the two via props. */}
+      <div className={classes.backdrop} onClick={onClose} />
       <dialog open className={classes.modal}>
         {/* Render whatever content was placed between <Modal> and
             </Modal> in the parent component. This is the power of

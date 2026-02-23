@@ -108,8 +108,27 @@ function PostsList() {
   //      updater here in PostsList.
   //   5. PostsList re-renders, passing the updated state values as props
   //      to Post, which displays them on screen.
+  // --- Multiple State Slices ---
+  //
+  // A component can call useState as many times as needed. Each call
+  // registers an independent "slice" of state. React tracks them by
+  // the order in which they are called (which is why hooks must not
+  // be called inside conditions or loops — the order must be stable
+  // across re-renders). The position of a useState call relative to
+  // the others does not affect behavior — first, second, or last all
+  // work the same way.
   const [enteredBody, setEnteredBody] = useState('');
   const [enteredAuthor, setEnteredAuthor] = useState('');
+
+  // --- State for Controlling Visibility ---
+  //
+  // State values are not limited to strings or numbers. Here we store
+  // a boolean that tracks whether the modal overlay should be visible.
+  // The initial value is true so the modal appears when the page first
+  // loads. Naming the state descriptively (modalIsVisible) makes the
+  // code self-documenting — anyone reading it can tell immediately
+  // what this piece of state controls.
+  const [modalIsVisible, setModalIsVisible] = useState(true);
 
   // --- Event Listeners in React (Declarative Approach) ---
   //
@@ -145,6 +164,25 @@ function PostsList() {
   // native onChange events on <textarea> and <input>. Each handler calls
   // its respective state updater, which triggers a re-render of PostsList
   // and all its children (including Post).
+  // --- Hiding the Modal via State ---
+  //
+  // This handler sets modalIsVisible to false. It will be passed down
+  // to Modal as the onClose prop, and Modal will attach it to the
+  // onClick event on its backdrop <div>. When the user clicks the
+  // dark overlay, the click fires → hideModalHandler runs →
+  // setModalIsVisible(false) → React re-executes PostsList → the
+  // conditional rendering logic (see below) now evaluates to false →
+  // the Modal is no longer included in the JSX output.
+  //
+  // This is another example of lifting state up: the click happens
+  // inside Modal (child), but the state that determines visibility
+  // lives here in PostsList (parent). The child receives a handler
+  // function via props and calls it when the event occurs, allowing
+  // the parent to update its own state.
+  function hideModalHandler() {
+    setModalIsVisible(false);
+  }
+
   function bodyChangeHandler(event) {
     setEnteredBody(event.target.value);
   }
@@ -159,14 +197,44 @@ function PostsList() {
   // element rule without adding any extra DOM node to the page.
   return (
     <>
-      {/* Wrapping NewPost inside Modal demonstrates the wrapper component
-          pattern. Modal uses its children prop to render whatever is placed
-          between its opening and closing tags — in this case, the NewPost
-          form. This gives us the backdrop overlay and centered dialog
-          styling from Modal without NewPost needing to know about it. */}
-      <Modal>
-        <NewPost onBodyChange={bodyChangeHandler} onAuthorChange={authorChangeHandler} />
-      </Modal>
+      {/* --- Conditional Rendering ---
+
+          React does not have a built-in "if" directive like some template
+          languages. Instead, you use plain JavaScript expressions inside
+          curly braces to decide what gets rendered. There are three common
+          patterns:
+
+          1. TERNARY EXPRESSION  (condition ? <A /> : <B />)
+             Renders one thing when true and another when false. Use null
+             or false as the "else" branch to render nothing:
+               {modalIsVisible ? <Modal>...</Modal> : null}
+
+          2. VARIABLE APPROACH
+             Declare a variable (e.g., let modalContent) that defaults to
+             nothing. Then use a regular if-statement to assign JSX to it
+             when the condition is true. Finally, output that variable in
+             the returned JSX with {modalContent}. This keeps the returned
+             JSX cleaner when the conditional block is large.
+
+          3. LOGICAL AND OPERATOR  (condition && <A />)
+             JavaScript's && returns the right-hand operand when the
+             left-hand side is truthy, or the left-hand value when it is
+             falsy. Since React skips rendering for false, null, and
+             undefined, writing {modalIsVisible && <Modal>...</Modal>}
+             renders Modal only when modalIsVisible is true — and renders
+             nothing when it is false.
+
+          All three approaches are valid. The && pattern is used here
+          because it is concise and reads naturally for show-or-hide
+          scenarios where there is no "else" branch to render. */}
+      {modalIsVisible && (
+        <Modal onClose={hideModalHandler}>
+          <NewPost
+            onBodyChange={bodyChangeHandler}
+            onAuthorChange={authorChangeHandler}
+          />
+        </Modal>
+      )}
       <ul className={classes.posts}>
         {/* The first Post now receives the live state values as props.
             Every keystroke updates the state, which causes PostsList to
