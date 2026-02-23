@@ -7,12 +7,14 @@
 //
 // The component hierarchy so far looks like this:
 //   main.jsx  renders  <App />
-//   App.jsx   renders  <PostsList />
-//   PostsList renders  <NewPost /> + <Post /> (multiple instances)
+//   App.jsx   renders  <MainHeader /> + <PostsList />
+//   PostsList renders  <Modal><NewPost /></Modal> + <Post /> (multiple)
 //
 // Each level focuses on one responsibility:
-//   - App is the root component (entry point of the component tree)
+//   - App is the root component and owns the modal visibility state
+//   - MainHeader renders the page header with the "New Post" button
 //   - PostsList manages the form and the list layout
+//   - Modal wraps the form in an overlay dialog
 //   - NewPost renders the form for creating a new post
 //   - Post renders a single list item
 //
@@ -92,7 +94,22 @@ import NewPost from './NewPost';
 import Modal from './Modal';
 import classes from './PostsList.module.css';
 
-function PostsList() {
+// --- Receiving Lifted State via Props ---
+//
+// The modalIsVisible state that used to live here has been lifted up to
+// App, because a sibling component (MainHeader) now also needs to
+// interact with it. PostsList receives two new props instead:
+//   isPosting     — a boolean indicating whether the modal should show
+//   onStopPosting — a handler function to call when the modal closes
+//
+// This demonstrates that state can travel through MULTIPLE levels:
+//   App (owns state) → PostsList (receives via isPosting) → Modal
+//     (receives the hide handler via onClose, originally from App)
+//
+// At each level, the prop name can differ from the original state
+// variable name. What matters is that the VALUE flows correctly. The
+// prop name should describe meaning from that component's perspective.
+function PostsList({ isPosting, onStopPosting }) {
   // --- Lifting State Up ---
   //
   // The state for the post body and author lives HERE (PostsList) rather
@@ -119,16 +136,6 @@ function PostsList() {
   // work the same way.
   const [enteredBody, setEnteredBody] = useState('');
   const [enteredAuthor, setEnteredAuthor] = useState('');
-
-  // --- State for Controlling Visibility ---
-  //
-  // State values are not limited to strings or numbers. Here we store
-  // a boolean that tracks whether the modal overlay should be visible.
-  // The initial value is true so the modal appears when the page first
-  // loads. Naming the state descriptively (modalIsVisible) makes the
-  // code self-documenting — anyone reading it can tell immediately
-  // what this piece of state controls.
-  const [modalIsVisible, setModalIsVisible] = useState(true);
 
   // --- Event Listeners in React (Declarative Approach) ---
   //
@@ -164,25 +171,6 @@ function PostsList() {
   // native onChange events on <textarea> and <input>. Each handler calls
   // its respective state updater, which triggers a re-render of PostsList
   // and all its children (including Post).
-  // --- Hiding the Modal via State ---
-  //
-  // This handler sets modalIsVisible to false. It will be passed down
-  // to Modal as the onClose prop, and Modal will attach it to the
-  // onClick event on its backdrop <div>. When the user clicks the
-  // dark overlay, the click fires → hideModalHandler runs →
-  // setModalIsVisible(false) → React re-executes PostsList → the
-  // conditional rendering logic (see below) now evaluates to false →
-  // the Modal is no longer included in the JSX output.
-  //
-  // This is another example of lifting state up: the click happens
-  // inside Modal (child), but the state that determines visibility
-  // lives here in PostsList (parent). The child receives a handler
-  // function via props and calls it when the event occurs, allowing
-  // the parent to update its own state.
-  function hideModalHandler() {
-    setModalIsVisible(false);
-  }
-
   function bodyChangeHandler(event) {
     setEnteredBody(event.target.value);
   }
@@ -207,7 +195,7 @@ function PostsList() {
           1. TERNARY EXPRESSION  (condition ? <A /> : <B />)
              Renders one thing when true and another when false. Use null
              or false as the "else" branch to render nothing:
-               {modalIsVisible ? <Modal>...</Modal> : null}
+               {isPosting ? <Modal>...</Modal> : null}
 
           2. VARIABLE APPROACH
              Declare a variable (e.g., let modalContent) that defaults to
@@ -220,15 +208,21 @@ function PostsList() {
              JavaScript's && returns the right-hand operand when the
              left-hand side is truthy, or the left-hand value when it is
              falsy. Since React skips rendering for false, null, and
-             undefined, writing {modalIsVisible && <Modal>...</Modal>}
-             renders Modal only when modalIsVisible is true — and renders
+             undefined, writing {isPosting && <Modal>...</Modal>}
+             renders Modal only when isPosting is true — and renders
              nothing when it is false.
 
           All three approaches are valid. The && pattern is used here
           because it is concise and reads naturally for show-or-hide
           scenarios where there is no "else" branch to render. */}
-      {modalIsVisible && (
-        <Modal onClose={hideModalHandler}>
+      {/* The isPosting prop (from App) controls visibility. The
+          onStopPosting prop (also from App) is forwarded to Modal's
+          onClose, which attaches it to the backdrop's onClick. So the
+          chain is: backdrop click → onClose → onStopPosting →
+          hideModalHandler in App → setModalIsVisible(false) → App
+          re-renders → isPosting becomes false → this block disappears. */}
+      {isPosting && (
+        <Modal onClose={onStopPosting}>
           <NewPost
             onBodyChange={bodyChangeHandler}
             onAuthorChange={authorChangeHandler}

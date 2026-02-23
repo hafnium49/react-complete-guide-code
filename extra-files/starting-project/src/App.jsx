@@ -45,12 +45,32 @@
 // instructions to render it on screen. You never call the function
 // yourself with parentheses — you always use the <ComponentName /> syntax.
 
-// PostsList is now the component that owns the list of Post instances.
-// App no longer imports Post directly — that responsibility has moved
-// into PostsList. This shows how component composition works in practice:
-// the root component delegates to child components, which in turn
-// delegate further down the tree.
+// --- Lifting State Up (Again) ---
+//
+// Previously, the modalIsVisible state lived in PostsList. But now a
+// NEW sibling component — MainHeader — also needs to interact with
+// that state (its button should open the modal). Since state can only
+// flow downward through props, the state must live in the nearest
+// common ancestor of both MainHeader and PostsList. That ancestor is
+// App. Moving state to a higher component to satisfy this requirement
+// is the "lifting state up" pattern applied once more.
+//
+// After lifting:
+//   - App owns modalIsVisible and its two handlers (show / hide).
+//   - App passes a boolean (isPosting) down to PostsList so it knows
+//     whether to render the modal.
+//   - App passes the hide handler (onStopPosting) to PostsList, which
+//     forwards it to Modal's onClose prop.
+//   - App passes the show handler (onCreatePost) to MainHeader, which
+//     attaches it to the button's onClick event.
+//
+// This means state values and handler functions can travel through
+// multiple levels of components. The flow may look complex at first,
+// but each step is just "pass a value via a prop."
+import { useState } from 'react';
+
 import PostsList from './components/PostsList';
+import MainHeader from './components/MainHeader';
 
 // --- Root Component ---
 //
@@ -91,10 +111,49 @@ function App() {
   // write it as a self-closing tag: <PostsList />. Writing it as a void
   // tag without the slash is NOT allowed and will cause an error. This
   // rule applies to both custom components and built-in HTML elements.
+
+  // The modal visibility state now lives here in App (lifted up from
+  // PostsList) so that both MainHeader and PostsList can interact with
+  // it. The default is false — the modal starts hidden, and the user
+  // must click the "New Post" button to open it.
+  const [modalIsVisible, setModalIsVisible] = useState(false);
+
+  // Two handlers — one to show, one to hide — give us full control
+  // over the modal. Each will be passed to a different child component:
+  // showModalHandler goes to MainHeader (button click opens the modal),
+  // hideModalHandler goes to PostsList (backdrop click closes it).
+  function showModalHandler() {
+    setModalIsVisible(true);
+  }
+
+  function hideModalHandler() {
+    setModalIsVisible(false);
+  }
+
+  // --- Passing State and Handlers Across Multiple Levels ---
+  //
+  // The component tree now looks like:
+  //   App  →  MainHeader   (receives showModalHandler via onCreatePost)
+  //   App  →  PostsList    (receives modalIsVisible via isPosting,
+  //                          and hideModalHandler via onStopPosting)
+  //        →  PostsList → Modal  (receives onStopPosting as onClose)
+  //
+  // The state value and its updaters flow DOWNWARD through props at
+  // each level. This is React's one-directional data flow in action:
+  // a parent decides what data each child gets, and children
+  // communicate back up by calling the handler functions they received.
+  //
+  // The prop name isPosting (rather than modalIsVisible) is chosen to
+  // describe meaning from PostsList's perspective: "am I currently in
+  // the process of creating a post?" Prop names do not have to match
+  // the state variable name — pick whatever communicates intent best.
   return (
-    <main>
-      <PostsList />
-    </main>
+    <>
+      <MainHeader onCreatePost={showModalHandler} />
+      <main>
+        <PostsList isPosting={modalIsVisible} onStopPosting={hideModalHandler} />
+      </main>
+    </>
   );
 }
 
