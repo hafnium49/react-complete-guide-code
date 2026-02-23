@@ -56,6 +56,8 @@
 //   - Hooks must be called at the top level of the component — not
 //     inside if-statements, loops, or nested functions.
 
+import { useState } from 'react';
+
 import Post from './Post';
 import NewPost from './NewPost';
 import Modal from './Modal';
@@ -76,21 +78,50 @@ import classes from './PostsList.module.css';
 // At each level, the prop name can differ from the original state
 // variable name. What matters is that the VALUE flows correctly. The
 // prop name should describe meaning from that component's perspective.
-// --- Simplification After Moving State Back Down ---
-//
-// The enteredBody and enteredAuthor state slices previously lived here
-// (lifted up from NewPost) so that a sibling Post could display live
-// input values. Now that form submission collects the data inside
-// NewPost itself, those state slices and their handler functions
-// (bodyChangeHandler, authorChangeHandler) have moved back to NewPost.
-//
-// PostsList is now much leaner: it no longer imports useState, no
-// longer defines change handlers, and no longer passes onBodyChange /
-// onAuthorChange to NewPost. The only props it forwards to NewPost are
-// onCancel (to close the modal). In a later lesson, PostsList will
-// manage an array of submitted posts — but for now it just renders
-// a static placeholder list.
 function PostsList({ isPosting, onStopPosting }) {
+  // --- Managing a List with useState ---
+  //
+  // State values can be of ANY JavaScript type — not just strings or
+  // booleans. Here the state is an ARRAY that will hold post objects.
+  // The initial value is an empty array ([]), meaning the list starts
+  // with no posts. Each time the user submits the form, a new object
+  // is prepended to this array, and React re-renders the component to
+  // reflect the updated list.
+  const [posts, setPosts] = useState([]);
+
+  // --- The Function Form of State Updates ---
+  //
+  // When the NEW state depends on the PREVIOUS state (e.g., adding an
+  // item to an existing array), you should pass a FUNCTION to the state
+  // updater instead of a plain value. React calls this function with the
+  // most recent state snapshot as its argument and uses the return value
+  // as the new state.
+  //
+  // Why not just write setPosts([postData, ...posts])?
+  // React does not apply state updates instantly — it SCHEDULES them.
+  // If multiple updates are queued in rapid succession, the "posts"
+  // variable captured in the closure might be stale (it reflects the
+  // state at the time the component last rendered, not necessarily the
+  // latest pending value). The function form guarantees that
+  // "existingPosts" is always the most up-to-date snapshot, even when
+  // several updates are pending at once.
+  //
+  // Rule of thumb: whenever your new state depends on the old state,
+  // use the function form. This applies to arrays, numbers (counters),
+  // objects — any state type where the update is relative to the
+  // current value.
+  //
+  // --- The Spread Operator (...) ---
+  //
+  // The spread operator (...existingPosts) copies every element from
+  // the existing array into the new array. By placing postData BEFORE
+  // the spread, the newest post appears first in the list. Without the
+  // spread, the old posts would be lost — you would always end up with
+  // an array containing only the single new post.
+  function addPostHandler(postData) {
+    setPosts((existingPosts) => [postData, ...existingPosts]);
+  }
+
   // NewPost (the form) and <ul> (the list) are siblings, so they need
   // a single root wrapper. Here we use a Fragment (<>...</>) — the
   // empty opening and closing tags — which satisfies React's one-root-
@@ -140,13 +171,24 @@ function PostsList({ isPosting, onStopPosting }) {
               button should produce the same result — closing the modal.
               NewPost no longer receives onBodyChange or onAuthorChange
               because it now manages its own input state internally. */}
-          <NewPost onCancel={onStopPosting} />
+          {/* onAddPost passes addPostHandler to NewPost. When the form
+              is submitted, NewPost calls onAddPost(postData), which
+              executes addPostHandler here — adding the new post object
+              to the posts array via setPosts. */}
+          <NewPost onCancel={onStopPosting} onAddPost={addPostHandler} />
         </Modal>
       )}
-      {/* The posts below are static placeholders. In the next lesson,
-          this list will be rendered dynamically from an array of post
-          objects that grows as the user submits new posts. */}
+      {/* The posts array is now managed as state above. Each submitted
+          form adds an object to this array. In the next lesson, we will
+          use .map() to render one <Post> per array element dynamically.
+          For now, the static placeholder demonstrates the layout. */}
       <ul className={classes.posts}>
+        {posts.length > 0 && (
+          <Post
+            author={posts[0].author}
+            body={posts[0].body}
+          />
+        )}
         <Post author="Manuel" body="Check out the full course!" />
       </ul>
     </>

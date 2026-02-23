@@ -21,10 +21,21 @@ import { useState } from 'react';
 
 import classes from './NewPost.module.css';
 
-// onCancel closes the modal. onAddPost (added in a future lesson) will
-// pass the collected form data up to PostsList so it can be added to
-// the posts array.
-function NewPost({ onCancel }) {
+// --- Communicating Data Back Up via Callback Props ---
+//
+// React's data flow is one-directional: parent → child via props. But
+// a child often needs to send data BACK to a parent (e.g., "here is
+// the form data the user just submitted"). The pattern for this is a
+// "callback prop": the parent defines a function, passes it to the
+// child as a prop, and the child CALLS that function with the data as
+// an argument. The parent's function then does whatever it needs —
+// updating state, making an API call, etc.
+//
+// onAddPost is such a callback. PostsList defines addPostHandler and
+// passes it here as onAddPost. When the form is submitted, NewPost
+// calls onAddPost(postData), which executes addPostHandler in
+// PostsList and adds the new post to the posts array.
+function NewPost({ onCancel, onAddPost }) {
   // --- htmlFor (not for) ---
   //
   // Just as the HTML "class" attribute becomes "className" in JSX,
@@ -80,7 +91,11 @@ function NewPost({ onCancel }) {
       body: enteredBody,
       author: enteredAuthor,
     };
-    console.log(postData);
+    // Pass the collected data UP to PostsList by calling the callback
+    // prop. This executes addPostHandler in PostsList, which prepends
+    // the new post to the posts array via setPosts.
+    onAddPost(postData);
+    // After adding the post, close the modal.
     onCancel();
   }
 
