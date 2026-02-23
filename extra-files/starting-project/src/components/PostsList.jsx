@@ -223,9 +223,14 @@ function PostsList({ isPosting, onStopPosting }) {
           re-renders → isPosting becomes false → this block disappears. */}
       {isPosting && (
         <Modal onClose={onStopPosting}>
+          {/* onCancel reuses the same onStopPosting function that Modal
+              receives via onClose. Both the backdrop click and the cancel
+              button should produce the same result — closing the modal.
+              Reusing the same handler avoids duplicating logic. */}
           <NewPost
             onBodyChange={bodyChangeHandler}
             onAuthorChange={authorChangeHandler}
+            onCancel={onStopPosting}
           />
         </Modal>
       )}
