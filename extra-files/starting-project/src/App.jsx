@@ -44,7 +44,13 @@
 // takes the JSX it returns, and generates the appropriate browser
 // instructions to render it on screen. You never call the function
 // yourself with parentheses — you always use the <ComponentName /> syntax.
-import Post from './components/Post';
+
+// PostsList is now the component that owns the list of Post instances.
+// App no longer imports Post directly — that responsibility has moved
+// into PostsList. This shows how component composition works in practice:
+// the root component delegates to child components, which in turn
+// delegate further down the tree.
+import PostsList from './components/PostsList';
 
 // --- Root Component ---
 //
@@ -65,40 +71,29 @@ function App() {
   //
   // Components you use only once (e.g., a site-wide navigation bar)
   // still benefit from being separate components, because they keep
-  // related logic isolated in one place.
-
-  // --- Passing Props ---
-  //
-  // Props are set on a component using an HTML-attribute-like syntax.
-  // Each attribute name becomes a key on the props object received by
-  // the component function. Here, the first Post receives
-  // { author: "Maximilian", body: "React.js is awesome!" } and the
-  // second receives { author: "Manuel", body: "Check out the full course!" }.
-  // This is how you configure the same component with different data —
-  // much like calling the same function with different arguments.
+  // related logic isolated in one place. PostsList is used only once
+  // here, but it encapsulates the list layout and its child Post items,
+  // keeping App focused on the overall page structure.
 
   // --- JSX Rule: Single Root Element ---
   //
   // A component's return statement must produce exactly ONE root JSX
-  // element. Sibling elements (like multiple <Post /> tags) cannot be
-  // returned side by side without a wrapper. That wrapper can be any
-  // HTML element (here <main> is a good semantic choice for page
-  // content). If no HTML element makes sense, React also accepts empty
-  // tags (<>...</>) called a "Fragment" as a wrapper that produces no
-  // extra DOM node.
+  // element. Sibling elements cannot be returned side by side without a
+  // wrapper. That wrapper can be any HTML element (here <main> is a good
+  // semantic choice for page content). If no HTML element makes sense,
+  // React also accepts empty tags (<>...</>) called a "Fragment" as a
+  // wrapper that produces no extra DOM node.
 
   // --- Self-Closing Tags ---
   //
   // In JSX, every element must be explicitly closed. If an element has
   // no children (no content between opening and closing tags), you can
-  // write it as a self-closing tag: <Post />. Writing it as a void tag
-  // without the slash (<Post>) is NOT allowed and will cause an error.
-  // This rule applies to both custom components and built-in HTML
-  // elements (e.g., <img />, <br />, <input />).
+  // write it as a self-closing tag: <PostsList />. Writing it as a void
+  // tag without the slash is NOT allowed and will cause an error. This
+  // rule applies to both custom components and built-in HTML elements.
   return (
     <main>
-      <Post author="Maximilian" body="React.js is awesome!" />
-      <Post author="Manuel" body="Check out the full course!" />
+      <PostsList />
     </main>
   );
 }

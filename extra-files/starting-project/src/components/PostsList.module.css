@@ -1,0 +1,14 @@
+/* Scoped styles for the PostsList component.
+   The .posts class is applied to the <ul> that wraps all Post items,
+   rendering them in a responsive CSS Grid layout. */
+
+.posts {
+  list-style: none;
+  max-width: 50rem;
+  margin: 1rem auto;
+  padding: 1rem 0;
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(3, 30%);
+  justify-content: center;
+}
