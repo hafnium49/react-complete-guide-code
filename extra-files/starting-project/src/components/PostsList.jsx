@@ -89,6 +89,7 @@ import { useState } from 'react';
 
 import Post from './Post';
 import NewPost from './NewPost';
+import Modal from './Modal';
 import classes from './PostsList.module.css';
 
 function PostsList() {
@@ -158,10 +159,14 @@ function PostsList() {
   // element rule without adding any extra DOM node to the page.
   return (
     <>
-      {/* Pass handler functions down to NewPost as props. NewPost does
-          not own any state — it just forwards these handlers to the
-          native form elements inside it. */}
-      <NewPost onBodyChange={bodyChangeHandler} onAuthorChange={authorChangeHandler} />
+      {/* Wrapping NewPost inside Modal demonstrates the wrapper component
+          pattern. Modal uses its children prop to render whatever is placed
+          between its opening and closing tags — in this case, the NewPost
+          form. This gives us the backdrop overlay and centered dialog
+          styling from Modal without NewPost needing to know about it. */}
+      <Modal>
+        <NewPost onBodyChange={bodyChangeHandler} onAuthorChange={authorChangeHandler} />
+      </Modal>
       <ul className={classes.posts}>
         {/* The first Post now receives the live state values as props.
             Every keystroke updates the state, which causes PostsList to

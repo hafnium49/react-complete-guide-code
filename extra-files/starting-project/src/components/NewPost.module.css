@@ -2,15 +2,19 @@
    The .form class styles the form container; nested selectors style the
    labels, inputs, textarea, and action buttons within it.
    The .actions class (for submit/cancel buttons) will be used in a later
-   lesson when form submission is implemented. */
+   lesson when form submission is implemented.
+
+   Note: border-radius, box-shadow, and margin were previously on .form
+   but have been REMOVED now that Modal wraps this component. The Modal's
+   <dialog> element provides the rounded corners and shadow via
+   Modal.module.css, and centering is handled by the dialog's default
+   positioning. Keeping those styles here would double them up or conflict
+   with Modal's layout. */
 
 .form {
   background-color: #6233b9;
   padding: 1rem;
   width: 20rem;
-  margin: 2rem auto;
-  border-radius: 6px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 .form label {

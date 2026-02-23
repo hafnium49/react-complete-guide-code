@@ -1,0 +1,24 @@
+/* Scoped styles for the Modal wrapper component.
+   The .backdrop class creates a semi-transparent overlay that covers the
+   entire viewport behind the dialog, visually separating the modal from the
+   page content. The .modal class styles the <dialog> element itself,
+   removing the browser's default border and adding a rounded shadow. */
+
+.backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 1;
+}
+
+.modal {
+  border: none;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  padding: 0;
+  overflow: hidden;
+  z-index: 1;
+}
