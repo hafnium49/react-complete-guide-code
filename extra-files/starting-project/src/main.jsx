@@ -1,3 +1,40 @@
+// --- Client-Side Routing (Introduction) ---
+//
+// Right now this application is a "Single Page Application" (SPA) in the
+// literal sense: every piece of UI — the header, the post list, the modal
+// form — lives on ONE page with ONE URL path. No matter what the user
+// does, the browser address bar always shows the same URL.
+//
+// In a traditional multi-page website, clicking a link loads an entirely
+// new HTML page from the server (e.g., /about, /contact). Each page has
+// its own URL, so users can bookmark pages, share links, and use the
+// browser's Back/Forward buttons to navigate between them.
+//
+// SPAs do NOT request new HTML pages from the server. All rendering
+// happens client-side via JavaScript. This makes navigation feel instant,
+// but it also means the URL never changes — you lose bookmarking, link
+// sharing, and browser history support.
+//
+// CLIENT-SIDE ROUTING solves this by intercepting URL changes in the
+// browser and mapping them to different React components — without ever
+// requesting a new HTML page. The URL updates in the address bar, the
+// Back/Forward buttons work, and links are shareable, but the actual
+// rendering is still handled entirely by React in the browser.
+//
+// The react-router-dom package is the de-facto standard for client-side
+// routing in React. It provides components and hooks that let you:
+//   - Define which component should render for each URL path
+//   - Navigate between paths without full page reloads
+//   - Read URL parameters (e.g., /posts/:id) inside components
+//   - Load data before rendering a route (loader functions)
+//   - Handle form submissions through route actions
+//
+// This entry file (main.jsx) is where the router will eventually be
+// configured, because the router needs to wrap the entire application
+// to intercept all navigation. The <App /> component currently rendered
+// here will be replaced by a router configuration that maps URL paths
+// to specific page components.
+
 // This is the main entry file of the entire application — the code here
 // executes first when the website is loaded in the browser.
 // This .jsx file extension signals that the file contains JSX syntax,

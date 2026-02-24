@@ -82,6 +82,21 @@ import MainHeader from './components/MainHeader';
 // serves a special role as the top-level entry point of the component
 // tree. Every other component is ultimately rendered because App (or one
 // of its descendants) includes it in its JSX output.
+//
+// --- How Routing Will Change This Structure ---
+//
+// When client-side routing is added, the role of App will shift. Instead
+// of rendering ALL components at once, the router will decide WHICH
+// components to render based on the current URL path. For example:
+//   /         → render the posts list page
+//   /create   → render the new-post form page
+//   /posts/42 → render a detail page for post 42
+//
+// The router configuration will live in main.jsx (replacing the direct
+// <App /> render call), and components like PostsList will become "route
+// components" — each associated with a specific URL path. Shared layout
+// (like MainHeader) can be placed in a "layout route" so it appears on
+// every page without being duplicated.
 function App() {
   // --- Reusing Components ---
   //
