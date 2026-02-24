@@ -89,6 +89,21 @@ function PostsList({ isPosting, onStopPosting }) {
   // reflect the updated list.
   const [posts, setPosts] = useState([]);
 
+  // --- Loading State ---
+  //
+  // When fetching data from a backend, the response may not arrive
+  // instantly — especially over a real network. During that wait time,
+  // the posts array is empty, so without additional state the user
+  // would see the "There are no posts yet" fallback, which is
+  // misleading (there ARE posts, they just haven't arrived yet).
+  //
+  // A dedicated boolean state (isFetching) lets us distinguish between
+  // "still loading" and "truly empty." We set it to true when the
+  // request starts and false when the response arrives. The JSX then
+  // uses this flag to show a "Loading posts..." message instead of the
+  // empty-state fallback while data is in transit.
+  const [isFetching, setIsFetching] = useState(false);
+
   // --- useEffect: Running Side Effects Safely ---
   //
   // A "side effect" is any action that does not directly produce JSX
@@ -141,9 +156,16 @@ function PostsList({ isPosting, onStopPosting }) {
   // sees only the final result.
   useEffect(() => {
     async function fetchPosts() {
+      // Set isFetching to true BEFORE the request goes out, so the UI
+      // can immediately show a loading indicator.
+      setIsFetching(true);
       const response = await fetch('http://localhost:8080/posts');
       const resData = await response.json();
       setPosts(resData.posts);
+      // Set isFetching to false AFTER the data has been stored in
+      // state, so the loading indicator disappears and the posts (or
+      // the empty-state fallback) appear instead.
+      setIsFetching(false);
     }
 
     fetchPosts();
@@ -303,7 +325,25 @@ function PostsList({ isPosting, onStopPosting }) {
 
           Omitting key still works, but React logs a warning and may
           exhibit subtle bugs with reordering or component state. */}
-      {posts.length > 0 && (
+      {/* --- Three-Way Conditional Rendering ---
+
+          The UI now has THREE possible states to display:
+            1. Loading — isFetching is true (request is in flight)
+            2. Posts exist — not fetching AND posts array is not empty
+            3. No posts — not fetching AND posts array is empty
+
+          We use separate && expressions to handle each case. The
+          conditions are mutually exclusive because isFetching gates
+          whether the other two can render. While data is loading, the
+          user sees "Loading posts..." instead of the misleading
+          "There are no posts yet" message. This is a much better user
+          experience, especially on slower networks. */}
+      {isFetching && (
+        <div style={{ textAlign: 'center', color: 'white' }}>
+          <p>Loading posts...</p>
+        </div>
+      )}
+      {!isFetching && posts.length > 0 && (
         <ul className={classes.posts}>
           {posts.map((post) => (
             <Post key={post.body} author={post.author} body={post.body} />
@@ -312,10 +352,10 @@ function PostsList({ isPosting, onStopPosting }) {
       )}
       {/* --- Empty-State Fallback ---
 
-          When the posts array has no items, we show a friendly
-          message instead of an empty page. This uses the same &&
-          conditional rendering pattern: posts.length === 0 is truthy
-          only when the array is empty.
+          This fallback now only appears when we are NOT fetching AND
+          the posts array is genuinely empty. The !isFetching guard
+          prevents this message from flashing while data is still in
+          transit.
 
           --- Inline Styles in JSX ---
 
@@ -326,7 +366,7 @@ function PostsList({ isPosting, onStopPosting }) {
           The outer curly braces open a dynamic expression; the inner
           curly braces define the object literal. Values are strings
           (or numbers for pixel values). */}
-      {posts.length === 0 && (
+      {!isFetching && posts.length === 0 && (
         <div style={{ textAlign: 'center', color: 'white' }}>
           <h2>There are no posts yet.</h2>
           <p>Start adding some!</p>

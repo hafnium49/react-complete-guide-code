@@ -105,9 +105,13 @@ app.use((req, res, next) => {
 // when the application starts (using the fetch API or similar).
 app.get('/posts', async (req, res) => {
   const storedPosts = await getStoredPosts();
-  // The commented-out line below can simulate network latency (1.5s
-  // delay) for testing loading states in the frontend.
-  // await new Promise((resolve, reject) => setTimeout(() => resolve(), 1500));
+  // This line simulates network latency by adding a 1.5-second delay
+  // before sending the response. In production you would never add an
+  // artificial delay, but it is useful during development to test how
+  // the frontend handles loading states. Without this delay, localhost
+  // responses are nearly instant, making it impossible to see loading
+  // indicators. Comment this line back out to restore instant responses.
+  await new Promise((resolve, reject) => setTimeout(() => resolve(), 1500));
   res.json({ posts: storedPosts });
 });
 
