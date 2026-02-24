@@ -55,10 +55,12 @@ function NewPost({ onCancel, onAddPost }) {
   const [enteredAuthor, setEnteredAuthor] = useState('');
 
   function bodyChangeHandler(event) {
+    // console.log(event.target.value);
     setEnteredBody(event.target.value);
   }
 
   function authorChangeHandler(event) {
+    // console.log(event.target.value);
     setEnteredAuthor(event.target.value);
   }
 
