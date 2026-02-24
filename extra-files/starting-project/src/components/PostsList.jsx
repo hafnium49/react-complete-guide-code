@@ -178,19 +178,66 @@ function PostsList({ isPosting, onStopPosting }) {
           <NewPost onCancel={onStopPosting} onAddPost={addPostHandler} />
         </Modal>
       )}
-      {/* The posts array is now managed as state above. Each submitted
-          form adds an object to this array. In the next lesson, we will
-          use .map() to render one <Post> per array element dynamically.
-          For now, the static placeholder demonstrates the layout. */}
-      <ul className={classes.posts}>
-        {posts.length > 0 && (
-          <Post
-            author={posts[0].author}
-            body={posts[0].body}
-          />
-        )}
-        <Post author="Manuel" body="Check out the full course!" />
-      </ul>
+      {/* --- Rendering Lists Dynamically with .map() ---
+
+          React can render an ARRAY of JSX elements. If you place an
+          array like [<p>A</p>, <p>B</p>] inside curly braces, React
+          renders every element in order. This means you can transform
+          a data array into a JSX array and output it directly.
+
+          Array.prototype.map() is the standard JavaScript method for
+          this. It takes a function that is called once for each item
+          in the source array. Whatever that function returns becomes
+          the corresponding item in the NEW array. Here, each post
+          object { body, author } is mapped to a <Post> JSX element.
+
+          --- The key Prop ---
+
+          When rendering a list with .map(), React requires a special
+          prop called key on each element. key is NOT a prop you
+          define or use inside the component — it is consumed
+          internally by React. Its purpose is to give React a stable
+          identity for each list item so that when the array changes
+          (items added, removed, or reordered), React can efficiently
+          determine which DOM nodes to create, update, or remove
+          rather than re-rendering the entire list from scratch.
+
+          The value must be UNIQUE among siblings. Ideally it should
+          be a stable identifier like a database ID. Here we use
+          post.body as a stand-in; in a production app you would use
+          a proper unique ID to avoid collisions.
+
+          Omitting key still works, but React logs a warning and may
+          exhibit subtle bugs with reordering or component state. */}
+      {posts.length > 0 && (
+        <ul className={classes.posts}>
+          {posts.map((post) => (
+            <Post key={post.body} author={post.author} body={post.body} />
+          ))}
+        </ul>
+      )}
+      {/* --- Empty-State Fallback ---
+
+          When the posts array has no items, we show a friendly
+          message instead of an empty page. This uses the same &&
+          conditional rendering pattern: posts.length === 0 is truthy
+          only when the array is empty.
+
+          --- Inline Styles in JSX ---
+
+          JSX accepts a style prop as a JavaScript OBJECT (not a CSS
+          string). Property names use camelCase instead of kebab-case:
+            textAlign   instead of  text-align
+            fontSize    instead of  font-size
+          The outer curly braces open a dynamic expression; the inner
+          curly braces define the object literal. Values are strings
+          (or numbers for pixel values). */}
+      {posts.length === 0 && (
+        <div style={{ textAlign: 'center', color: 'white' }}>
+          <h2>There are no posts yet.</h2>
+          <p>Start adding some!</p>
+        </div>
+      )}
     </>
   );
 }
