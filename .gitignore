@@ -25,3 +25,4 @@ yarn-debug.log*
 yarn-error.log*
 
 extra-files/starting-project/node_modules/
+extra-files/dummy-backend/node_modules/
