@@ -52,9 +52,10 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 
 import App from './App';
 import NewPost from './components/NewPost';
+import RootLayout from './routes/RootLayout';
 import './index.css';
 
-// --- Route Configuration ---
+// --- Route Configuration with Layout Routes ---
 //
 // createBrowserRouter receives an ARRAY of route definition objects.
 // Each object represents one route the application supports. At minimum,
@@ -62,33 +63,47 @@ import './index.css';
 //   path    — a string that React Router compares against the current URL
 //   element — the JSX that should appear on screen when path matches
 //
-// The path "/" (a single forward slash with nothing after it) matches the
-// bare domain URL (e.g., localhost:5173/). This is the "index" or "home"
-// route. When a user visits the root URL, React Router renders the
-// element associated with this path — in this case the App component,
-// which displays the header and the full post list.
+// --- Layout Routes and the children Property ---
 //
-// The path "/create-post" matches localhost:5173/create-post. Navigating
-// there renders only the NewPost form component. Notice that at this
-// stage NewPost is rendered WITHOUT any props — onCancel and onAddPost
-// are not passed, so the cancel button and form submission will not
-// work correctly yet. The rest of the application (header, post list)
-// is also absent because each route renders its element in ISOLATION.
-// These issues will be solved with "layout routes" in the next lesson.
+// A route definition can include a THIRD property: children. This is an
+// array of nested route definitions. When a parent route has children,
+// it becomes a "layout route" — its element renders shared UI (like a
+// header or sidebar) and includes an <Outlet /> component that acts as
+// a placeholder. React Router renders the matching child's element
+// inside that Outlet.
+//
+// The structure below creates one layout route (path "/") that wraps
+// two child routes. The layout route's element is RootLayout, which
+// renders MainHeader and an Outlet. The children define what appears
+// in the Outlet based on the URL:
+//
+//   URL "/"             → RootLayout renders, Outlet shows <App />
+//   URL "/create-post"  → RootLayout renders, Outlet shows <NewPost />
+//
+// Because both child routes are nested under the same layout, the
+// MainHeader from RootLayout stays on screen regardless of which
+// child route is active. Only the Outlet content swaps.
+//
+// The position of the layout route in the array does not matter —
+// React Router matches by path, not by array index.
 //
 // If the user navigates to a path that does NOT match any route (e.g.,
 // /about), React Router displays an error page indicating that no
-// matching route was found. This confirms that the router is active
-// and enforcing the configured paths.
+// matching route was found.
 //
-// The element property accepts any JSX — it could be a component tag
-// like <App />, a raw HTML element like <h1>Hello</h1>, or any other
-// valid JSX expression. In practice, you almost always render a
-// component because each page has enough complexity to warrant its
-// own file.
+// NOTE: At this stage, the App component still renders its OWN
+// MainHeader internally, so navigating to "/" will show the header
+// TWICE — once from RootLayout and once from App. This duplication
+// will be resolved in the next refactoring step.
 const router = createBrowserRouter([
-  { path: '/', element: <App /> },
-  { path: '/create-post', element: <NewPost /> },
+  {
+    path: '/',
+    element: <RootLayout />,
+    children: [
+      { path: '/', element: <App /> },
+      { path: '/create-post', element: <NewPost /> },
+    ],
+  },
 ]);
 
 // --- Rendering the Router Instead of a Component ---
