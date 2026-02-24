@@ -56,7 +56,7 @@
 //   - Hooks must be called at the top level of the component — not
 //     inside if-statements, loops, or nested functions.
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import Post from './Post';
 import NewPost from './NewPost';
@@ -88,6 +88,66 @@ function PostsList({ isPosting, onStopPosting }) {
   // is prepended to this array, and React re-renders the component to
   // reflect the updated list.
   const [posts, setPosts] = useState([]);
+
+  // --- useEffect: Running Side Effects Safely ---
+  //
+  // A "side effect" is any action that does not directly produce JSX
+  // output but may indirectly affect the UI later — sending HTTP
+  // requests, setting up timers, accessing browser APIs, etc.
+  //
+  // Why not just call fetch() directly in the component body?
+  // Because every state update causes React to re-execute the
+  // component function. If a fetch() call inside the body updates
+  // state, that triggers ANOTHER re-execution, which sends ANOTHER
+  // fetch, which updates state again — an infinite loop.
+  //
+  // useEffect solves this by letting React control WHEN the effect
+  // function runs. It takes two arguments:
+  //
+  //   1. An EFFECT FUNCTION — the code to execute (e.g., fetch data).
+  //      React calls this function FOR you at the right time.
+  //
+  //   2. A DEPENDENCY ARRAY — a list of values that the effect depends
+  //      on. React compares these values between renders and only
+  //      re-runs the effect when at least one has changed.
+  //
+  //      - []  (empty array) = no dependencies → the effect runs ONCE,
+  //        after the component's first render. It never runs again,
+  //        because there are no values to change. This is perfect for
+  //        one-time data fetching on component mount.
+  //
+  //      - [someVar] = the effect re-runs whenever someVar changes.
+  //
+  //      - omitting the array entirely = the effect runs after EVERY
+  //        render (rarely what you want).
+  //
+  // --- Why Not async on the Effect Function? ---
+  //
+  // The function passed to useEffect must return either nothing or a
+  // "cleanup function" (used for teardown tasks like removing event
+  // listeners). Adding async to a function always makes it return a
+  // Promise, which violates this contract. The workaround is to
+  // define a separate async function INSIDE the effect and call it
+  // immediately. This lets you use await for cleaner code while
+  // keeping the outer effect function synchronous.
+  //
+  // --- Execution Timing ---
+  //
+  // The effect runs AFTER the component renders, not before. So on
+  // the very first render, posts is still [] and the empty-state
+  // fallback appears briefly. Then the effect fires, fetches data,
+  // calls setPosts, which triggers a second render with the fetched
+  // posts. In practice this happens so fast that the user typically
+  // sees only the final result.
+  useEffect(() => {
+    async function fetchPosts() {
+      const response = await fetch('http://localhost:8080/posts');
+      const resData = await response.json();
+      setPosts(resData.posts);
+    }
+
+    fetchPosts();
+  }, []);
 
   // --- The Function Form of State Updates ---
   //
