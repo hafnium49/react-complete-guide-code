@@ -1,39 +1,20 @@
-// --- Client-Side Routing (Introduction) ---
+// --- Configuring Client-Side Routes ---
 //
-// Right now this application is a "Single Page Application" (SPA) in the
-// literal sense: every piece of UI — the header, the post list, the modal
-// form — lives on ONE page with ONE URL path. No matter what the user
-// does, the browser address bar always shows the same URL.
+// This file now sets up the router that maps URL paths to React
+// components. Instead of always rendering <App />, the application
+// will render DIFFERENT components depending on the current URL.
 //
-// In a traditional multi-page website, clicking a link loads an entirely
-// new HTML page from the server (e.g., /about, /contact). Each page has
-// its own URL, so users can bookmark pages, share links, and use the
-// browser's Back/Forward buttons to navigate between them.
+// The planned routes for this demo application are:
+//   /             → the starting page showing all posts
+//   /create-post  → the new-post form (its own URL, shareable/bookmarkable)
+//   /posts/:id    → a detail page for a single post (future lesson)
 //
-// SPAs do NOT request new HTML pages from the server. All rendering
-// happens client-side via JavaScript. This makes navigation feel instant,
-// but it also means the URL never changes — you lose bookmarking, link
-// sharing, and browser history support.
+// Each route is an object with at least two properties:
+//   path    — the URL path segment to match (e.g., "/" or "/create-post")
+//   element — the JSX to render when that path is active
 //
-// CLIENT-SIDE ROUTING solves this by intercepting URL changes in the
-// browser and mapping them to different React components — without ever
-// requesting a new HTML page. The URL updates in the address bar, the
-// Back/Forward buttons work, and links are shareable, but the actual
-// rendering is still handled entirely by React in the browser.
-//
-// The react-router-dom package is the de-facto standard for client-side
-// routing in React. It provides components and hooks that let you:
-//   - Define which component should render for each URL path
-//   - Navigate between paths without full page reloads
-//   - Read URL parameters (e.g., /posts/:id) inside components
-//   - Load data before rendering a route (loader functions)
-//   - Handle form submissions through route actions
-//
-// This entry file (main.jsx) is where the router will eventually be
-// configured, because the router needs to wrap the entire application
-// to intercept all navigation. The <App /> component currently rendered
-// here will be replaced by a router configuration that maps URL paths
-// to specific page components.
+// Together these route objects form the route configuration array passed
+// to createBrowserRouter.
 
 // This is the main entry file of the entire application — the code here
 // executes first when the website is loaded in the browser.
@@ -49,35 +30,83 @@
 // Node.js mechanism for declaring which third-party packages a project uses.
 // Running "npm install" reads that file and downloads everything into
 // node_modules.
-import React from 'react'
-import ReactDOM from 'react-dom/client'
+import React from 'react';
+import ReactDOM from 'react-dom/client';
 
-// Here we import the App component from a sibling .jsx file. For JavaScript
-// and JSX files, the file extension can (and should) be omitted in the
-// import path — so './App' resolves to './App.jsx'.
-import App from './App'
-
-// Importing a CSS file directly into a JavaScript file is not something
-// browsers support natively. The build tool (Vite) detects this import and
-// injects the CSS into the final page automatically — you can verify this
-// by opening browser DevTools and inspecting the <head> element, where
-// you'll find the styles from index.css injected as a <style> tag.
-import './index.css'
-
-// createRoot uses vanilla JavaScript (document.getElementById) to locate the
-// <div id="root"> in index.html — the only HTML file in this project.
-// The render method then takes JSX code and displays it inside that element.
+// --- RouterProvider and createBrowserRouter ---
 //
-// React.StrictMode is an optional wrapper that enables extra development-time
-// checks. It warns about potentially suboptimal or outdated patterns in your
-// code, including practices that may conflict with future React releases.
+// These are the two key imports from react-router-dom needed to enable
+// client-side routing:
 //
-// The <App /> tag is how we use our own component in JSX — custom components
-// are written as functions (see App.jsx) and can then be embedded in JSX
-// just like regular HTML elements. App is the single root component; it
-// in turn renders other components (like Post), building the full UI tree.
+//   createBrowserRouter — a function that accepts an array of route
+//     definition objects and returns a router configuration object. It
+//     uses the browser's History API under the hood to monitor and
+//     manipulate the URL without triggering full page reloads.
+//
+//   RouterProvider — a React component that activates the router. It
+//     replaces the previous <App /> at the render root and takes a
+//     single prop called "router", whose value is the configuration
+//     object returned by createBrowserRouter. Once rendered, it watches
+//     the browser URL and renders the matching route's element.
+import { RouterProvider, createBrowserRouter } from 'react-router-dom';
+
+import App from './App';
+import NewPost from './components/NewPost';
+import './index.css';
+
+// --- Route Configuration ---
+//
+// createBrowserRouter receives an ARRAY of route definition objects.
+// Each object represents one route the application supports. At minimum,
+// a route needs:
+//   path    — a string that React Router compares against the current URL
+//   element — the JSX that should appear on screen when path matches
+//
+// The path "/" (a single forward slash with nothing after it) matches the
+// bare domain URL (e.g., localhost:5173/). This is the "index" or "home"
+// route. When a user visits the root URL, React Router renders the
+// element associated with this path — in this case the App component,
+// which displays the header and the full post list.
+//
+// The path "/create-post" matches localhost:5173/create-post. Navigating
+// there renders only the NewPost form component. Notice that at this
+// stage NewPost is rendered WITHOUT any props — onCancel and onAddPost
+// are not passed, so the cancel button and form submission will not
+// work correctly yet. The rest of the application (header, post list)
+// is also absent because each route renders its element in ISOLATION.
+// These issues will be solved with "layout routes" in the next lesson.
+//
+// If the user navigates to a path that does NOT match any route (e.g.,
+// /about), React Router displays an error page indicating that no
+// matching route was found. This confirms that the router is active
+// and enforcing the configured paths.
+//
+// The element property accepts any JSX — it could be a component tag
+// like <App />, a raw HTML element like <h1>Hello</h1>, or any other
+// valid JSX expression. In practice, you almost always render a
+// component because each page has enough complexity to warrant its
+// own file.
+const router = createBrowserRouter([
+  { path: '/', element: <App /> },
+  { path: '/create-post', element: <NewPost /> },
+]);
+
+// --- Rendering the Router Instead of a Component ---
+//
+// Previously, <App /> was rendered directly inside createRoot().render().
+// Now <RouterProvider /> takes its place. This is the key switch that
+// enables routing: instead of React always rendering the same component
+// tree, RouterProvider inspects the current browser URL, finds the
+// matching route in the configuration, and renders that route's element.
+//
+// The router prop receives the configuration object created above.
+// Without this prop, RouterProvider has no routes to match and will
+// throw an error.
+//
+// React.StrictMode still wraps everything — it is unrelated to routing
+// and continues to provide its development-time warnings.
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <App />
+    <RouterProvider router={router} />
   </React.StrictMode>
-)
+);

@@ -83,20 +83,21 @@ import MainHeader from './components/MainHeader';
 // tree. Every other component is ultimately rendered because App (or one
 // of its descendants) includes it in its JSX output.
 //
-// --- How Routing Will Change This Structure ---
+// --- App as a Route Element ---
 //
-// When client-side routing is added, the role of App will shift. Instead
-// of rendering ALL components at once, the router will decide WHICH
-// components to render based on the current URL path. For example:
-//   /         → render the posts list page
-//   /create   → render the new-post form page
-//   /posts/42 → render a detail page for post 42
+// With client-side routing now configured in main.jsx, App is no longer
+// rendered directly by createRoot(). Instead, it is the ELEMENT for the
+// "/" route — React Router renders it only when the browser URL matches
+// "/". Navigating to a different path (e.g., "/create-post") causes
+// React Router to render a DIFFERENT component entirely, and App
+// disappears from the screen.
 //
-// The router configuration will live in main.jsx (replacing the direct
-// <App /> render call), and components like PostsList will become "route
-// components" — each associated with a specific URL path. Shared layout
-// (like MainHeader) can be placed in a "layout route" so it appears on
-// every page without being duplicated.
+// This means that the header, the post list, and the modal form all
+// vanish when the user navigates away from "/". Ideally, shared UI
+// like MainHeader should persist across all routes. That problem will
+// be solved with "layout routes," which allow a parent route to render
+// wrapper UI (header, navigation) that stays on screen while child
+// routes swap in and out below it.
 function App() {
   // --- Reusing Components ---
   //
