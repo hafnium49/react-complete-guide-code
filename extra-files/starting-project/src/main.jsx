@@ -50,58 +50,59 @@ import ReactDOM from 'react-dom/client';
 //     the browser URL and renders the matching route's element.
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 
-import App from './App';
-import NewPost from './components/NewPost';
 import RootLayout from './routes/RootLayout';
+import Posts from './routes/Posts';
+import NewPost from './routes/NewPost';
 import './index.css';
 
-// --- Route Configuration with Layout Routes ---
+// --- Nested Layout Routes ---
 //
-// createBrowserRouter receives an ARRAY of route definition objects.
-// Each object represents one route the application supports. At minimum,
-// a route needs:
-//   path    — a string that React Router compares against the current URL
-//   element — the JSX that should appear on screen when path matches
+// The route configuration now has TWO levels of nesting:
 //
-// --- Layout Routes and the children Property ---
+//   Level 1: RootLayout (path "/")
+//     Provides the MainHeader and an Outlet for its children.
 //
-// A route definition can include a THIRD property: children. This is an
-// array of nested route definitions. When a parent route has children,
-// it becomes a "layout route" — its element renders shared UI (like a
-// header or sidebar) and includes an <Outlet /> component that acts as
-// a placeholder. React Router renders the matching child's element
-// inside that Outlet.
+//   Level 2: Posts (path "/")
+//     A child of RootLayout that is ALSO a layout route. It renders
+//     its own Outlet (for the modal overlay) plus the PostsList in a
+//     <main> section. Because Posts has the same path as its parent,
+//     it matches the root URL and renders inside RootLayout's Outlet.
 //
-// The structure below creates one layout route (path "/") that wraps
-// two child routes. The layout route's element is RootLayout, which
-// renders MainHeader and an Outlet. The children define what appears
-// in the Outlet based on the URL:
+//   Level 3: NewPost (path "/create-post")
+//     A child of Posts. When the URL is /create-post, NewPost renders
+//     inside Posts' Outlet — which sits ABOVE the post list. Since
+//     NewPost wraps itself in a Modal, it appears as an overlay on
+//     top of the posts, achieving the desired stacked look.
 //
-//   URL "/"             → RootLayout renders, Outlet shows <App />
-//   URL "/create-post"  → RootLayout renders, Outlet shows <NewPost />
+// The full nesting visualized:
+//   RootLayout          → MainHeader + Outlet
+//     └─ Posts           → Outlet + <main><PostsList /></main>
+//          └─ NewPost    → Modal overlay with the form
 //
-// Because both child routes are nested under the same layout, the
-// MainHeader from RootLayout stays on screen regardless of which
-// child route is active. Only the Outlet content swaps.
+// When the URL is just "/":
+//   RootLayout renders MainHeader, its Outlet renders Posts,
+//   Posts' Outlet is empty (no child route matches), and PostsList
+//   displays below.
 //
-// The position of the layout route in the array does not matter —
-// React Router matches by path, not by array index.
+// When the URL is "/create-post":
+//   RootLayout renders MainHeader, its Outlet renders Posts,
+//   Posts' Outlet renders NewPost (as a modal), and PostsList
+//   still displays below — giving the overlay-on-list appearance.
 //
-// If the user navigates to a path that does NOT match any route (e.g.,
-// /about), React Router displays an error page indicating that no
-// matching route was found.
-//
-// NOTE: At this stage, the App component still renders its OWN
-// MainHeader internally, so navigating to "/" will show the header
-// TWICE — once from RootLayout and once from App. This duplication
-// will be resolved in the next refactoring step.
+// NOTE: The cancel/close buttons and the "New Post" button do not
+// work yet because they still rely on the old prop-based modal
+// toggling. These will be wired up using React Router's navigation
+// features in upcoming lessons.
 const router = createBrowserRouter([
   {
     path: '/',
     element: <RootLayout />,
     children: [
-      { path: '/', element: <App /> },
-      { path: '/create-post', element: <NewPost /> },
+      {
+        path: '/',
+        element: <Posts />,
+        children: [{ path: '/create-post', element: <NewPost /> }],
+      },
     ],
   },
 ]);

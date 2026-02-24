@@ -1,26 +1,19 @@
-// --- Composing Components ---
+// --- PostsList: Simplified After Routing Refactor ---
 //
-// React applications are built by composing components — nesting them
-// inside each other to form a tree. This PostsList component demonstrates
-// that pattern: it imports the Post component and uses it multiple times
-// inside an <ul> (unordered list).
+// With routing in place, this component's responsibilities have been
+// significantly reduced. It is no longer responsible for:
+//   - Rendering the Modal or NewPost form (now a separate route)
+//   - Receiving isPosting / onStopPosting props (modal visibility is
+//     now controlled by URL navigation, not boolean state)
 //
-// The component hierarchy so far looks like this:
-//   main.jsx  renders  <App />
-//   App.jsx   renders  <MainHeader /> + <PostsList />
-//   PostsList renders  <Modal><NewPost /></Modal> + <Post /> (multiple)
+// PostsList now focuses purely on fetching and displaying the list of
+// posts. The component hierarchy has changed from:
+//   App → PostsList → Modal + NewPost + Post (multiple)
+// to:
+//   Posts (route) → PostsList → Post (multiple)
 //
-// Each level focuses on one responsibility:
-//   - App is the root component and owns the modal visibility state
-//   - MainHeader renders the page header with the "New Post" button
-//   - PostsList manages the form and the list layout
-//   - Modal wraps the form in an overlay dialog
-//   - NewPost renders the form for creating a new post
-//   - Post renders a single list item
-//
-// This separation keeps each component small and focused. As the
-// application grows, you continue breaking the UI into more components
-// and composing them together in the same way.
+// The NewPost form is now a sibling route rendered via Outlet in the
+// Posts layout route, not a child of PostsList.
 
 // --- Naming Conventions ---
 //
@@ -59,26 +52,15 @@
 import { useEffect, useState } from 'react';
 
 import Post from './Post';
-import NewPost from './NewPost';
-import Modal from './Modal';
 import classes from './PostsList.module.css';
 
-// --- Receiving Lifted State via Props ---
+// --- No More Modal Props ---
 //
-// The modalIsVisible state that used to live here has been lifted up to
-// App, because a sibling component (MainHeader) now also needs to
-// interact with it. PostsList receives two new props instead:
-//   isPosting     — a boolean indicating whether the modal should show
-//   onStopPosting — a handler function to call when the modal closes
-//
-// This demonstrates that state can travel through MULTIPLE levels:
-//   App (owns state) → PostsList (receives via isPosting) → Modal
-//     (receives the hide handler via onClose, originally from App)
-//
-// At each level, the prop name can differ from the original state
-// variable name. What matters is that the VALUE flows correctly. The
-// prop name should describe meaning from that component's perspective.
-function PostsList({ isPosting, onStopPosting }) {
+// Previously this component received isPosting and onStopPosting props
+// from App to control modal visibility. With routing, the modal is now
+// a separate route (/create-post) — whether it appears is determined by
+// the URL, not by props. PostsList therefore takes no props at all.
+function PostsList() {
   // --- Managing a List with useState ---
   //
   // State values can be of ANY JavaScript type — not just strings or
@@ -227,6 +209,12 @@ function PostsList({ isPosting, onStopPosting }) {
   // we don't need it here because we already update the local state
   // optimistically (immediately adding the post to the UI). Fetching
   // data FROM the backend will be handled in the next lesson.
+  //
+  // NOTE: This function is currently unused — NewPost (which called it
+  // via the onAddPost prop) is now a separate route and no longer
+  // receives this handler. The code is intentionally kept because the
+  // post-creation logic will be reintegrated soon using a different
+  // mechanism (React Router actions).
   function addPostHandler(postData) {
     fetch('http://localhost:8080/posts', {
       method: 'POST',
@@ -238,62 +226,8 @@ function PostsList({ isPosting, onStopPosting }) {
     setPosts((existingPosts) => [postData, ...existingPosts]);
   }
 
-  // NewPost (the form) and <ul> (the list) are siblings, so they need
-  // a single root wrapper. Here we use a Fragment (<>...</>) — the
-  // empty opening and closing tags — which satisfies React's one-root-
-  // element rule without adding any extra DOM node to the page.
   return (
     <>
-      {/* --- Conditional Rendering ---
-
-          React does not have a built-in "if" directive like some template
-          languages. Instead, you use plain JavaScript expressions inside
-          curly braces to decide what gets rendered. There are three common
-          patterns:
-
-          1. TERNARY EXPRESSION  (condition ? <A /> : <B />)
-             Renders one thing when true and another when false. Use null
-             or false as the "else" branch to render nothing:
-               {isPosting ? <Modal>...</Modal> : null}
-
-          2. VARIABLE APPROACH
-             Declare a variable (e.g., let modalContent) that defaults to
-             nothing. Then use a regular if-statement to assign JSX to it
-             when the condition is true. Finally, output that variable in
-             the returned JSX with {modalContent}. This keeps the returned
-             JSX cleaner when the conditional block is large.
-
-          3. LOGICAL AND OPERATOR  (condition && <A />)
-             JavaScript's && returns the right-hand operand when the
-             left-hand side is truthy, or the left-hand value when it is
-             falsy. Since React skips rendering for false, null, and
-             undefined, writing {isPosting && <Modal>...</Modal>}
-             renders Modal only when isPosting is true — and renders
-             nothing when it is false.
-
-          All three approaches are valid. The && pattern is used here
-          because it is concise and reads naturally for show-or-hide
-          scenarios where there is no "else" branch to render. */}
-      {/* The isPosting prop (from App) controls visibility. The
-          onStopPosting prop (also from App) is forwarded to Modal's
-          onClose, which attaches it to the backdrop's onClick. So the
-          chain is: backdrop click → onClose → onStopPosting →
-          hideModalHandler in App → setModalIsVisible(false) → App
-          re-renders → isPosting becomes false → this block disappears. */}
-      {isPosting && (
-        <Modal onClose={onStopPosting}>
-          {/* onCancel reuses the same onStopPosting function that Modal
-              receives via onClose. Both the backdrop click and the cancel
-              button should produce the same result — closing the modal.
-              NewPost no longer receives onBodyChange or onAuthorChange
-              because it now manages its own input state internally. */}
-          {/* onAddPost passes addPostHandler to NewPost. When the form
-              is submitted, NewPost calls onAddPost(postData), which
-              executes addPostHandler here — adding the new post object
-              to the posts array via setPosts. */}
-          <NewPost onCancel={onStopPosting} onAddPost={addPostHandler} />
-        </Modal>
-      )}
       {/* --- Rendering Lists Dynamically with .map() ---
 
           React can render an ARRAY of JSX elements. If you place an
