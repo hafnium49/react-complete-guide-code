@@ -118,7 +118,41 @@ function PostsList({ isPosting, onStopPosting }) {
   // the spread, the newest post appears first in the list. Without the
   // spread, the old posts would be lost — you would always end up with
   // an array containing only the single new post.
+  // --- Sending HTTP Requests with fetch() ---
+  //
+  // The fetch() function is a built-in browser API (NOT a React feature)
+  // for sending HTTP requests. Despite its name, it can be used to SEND
+  // data as well as retrieve it.
+  //
+  // fetch(url, options) takes two arguments:
+  //   1. The URL to send the request to. Here it points to the dummy
+  //      backend running on localhost:8080. The /posts path matches the
+  //      POST /posts route defined in the backend's app.js.
+  //   2. An optional configuration object where you can set:
+  //      - method: The HTTP method. fetch() defaults to GET, so we
+  //        explicitly set it to "POST" to create a new resource.
+  //      - body: The data to attach to the request. HTTP request bodies
+  //        must be strings, so we use JSON.stringify() to convert our
+  //        JavaScript postData object into a JSON string.
+  //      - headers: An object of HTTP headers. The "Content-Type" header
+  //        tells the backend what format the body is in. Setting it to
+  //        "application/json" lets the backend's body-parser middleware
+  //        know to parse the incoming body as JSON.
+  //
+  // fetch() returns a Promise, but for now we are not waiting for or
+  // using the response — we just "fire and forget." The backend receives
+  // the data, stores it in posts.json, and sends back a response, but
+  // we don't need it here because we already update the local state
+  // optimistically (immediately adding the post to the UI). Fetching
+  // data FROM the backend will be handled in the next lesson.
   function addPostHandler(postData) {
+    fetch('http://localhost:8080/posts', {
+      method: 'POST',
+      body: JSON.stringify(postData),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
     setPosts((existingPosts) => [postData, ...existingPosts]);
   }
 
