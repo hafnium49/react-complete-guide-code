@@ -1,172 +1,164 @@
-// --- NewPost as a Route Component ---
+// --- NewPost: Using React Router Actions for Data Submission ---
 //
-// This component has been moved from components/ to routes/ because it
-// is now rendered by React Router as its own route (/create-post), not
-// embedded inside another component via props.
+// This component has been dramatically simplified. Previously it was
+// responsible for:
+//   - Managing form input state with useState (enteredBody, enteredAuthor)
+//   - Updating state on every keystroke via onChange handlers
+//   - Manually handling form submission (preventDefault, building postData)
+//   - Calling a callback prop to send data to the parent
 //
-// Previously, PostsList was responsible for wrapping NewPost in a Modal
-// and controlling when it appeared (via the isPosting state). Now that
-// routing handles "when" this component appears (based on the URL), the
-// Modal wrapper has moved HERE — NewPost itself is responsible for
-// rendering the modal overlay around its form.
-
-// --- Moving State Back Down ---
+// All of that has been replaced by React Router's ACTION feature, which
+// is the data-submission counterpart to the LOADER feature used for
+// data fetching:
+//   - Loaders  → fetch data BEFORE a route renders (GET)
+//   - Actions  → handle data AFTER a form submission  (POST/PUT/DELETE)
 //
-// Previously the enteredBody and enteredAuthor state was "lifted up" to
-// PostsList so that a sibling Post component could display the live
-// values. That approach is no longer needed because the posts will be
-// rendered from a dynamic list rather than wired to individual state
-// variables. The form input state has therefore moved BACK into NewPost
-// — the component where the input events actually occur.
-//
-// This illustrates an important principle: state should live as CLOSE as
-// possible to the code that uses it. When multiple components needed the
-// values, lifting up was correct. Now that only NewPost needs them (to
-// bundle and submit), keeping them here avoids unnecessary props and
-// re-renders in the parent.
-
-import { useState } from 'react';
+// The component no longer uses useState, onChange, onSubmit, or any
+// callback props. Instead, it uses React Router's <Form> component and
+// the HTML "name" attribute on inputs to let React Router collect and
+// process the form data automatically.
 
 // --- Link for Cancel Navigation ---
 //
 // The cancel button has been replaced with a Link component. Instead
 // of calling an onCancel callback prop (which no longer exists), it
 // navigates to the parent route ("..") when clicked — closing the
-// modal by leaving the /create-post route. This follows the same
-// pattern used in MainHeader: declarative navigation via Link for
-// user-initiated click actions.
-import { Link } from 'react-router-dom';
+// modal by leaving the /create-post route.
+import { Link, Form, redirect } from 'react-router-dom';
 
 import Modal from '../components/Modal';
 import classes from './NewPost.module.css';
 
-// --- Self-Contained Route Component ---
+// --- Route Action Function ---
 //
-// With routing handling both opening (Link in MainHeader) and closing
-// (navigate in Modal, Link for cancel), this component no longer needs
-// onCancel as a prop. The onAddPost prop is also not received from any
-// parent when this component is loaded as a route. Form submission
-// handling will be reworked in an upcoming lesson using React Router's
-// action functions.
-function NewPost({ onAddPost }) {
-  // --- htmlFor (not for) ---
-  //
-  // Just as the HTML "class" attribute becomes "className" in JSX,
-  // the HTML "for" attribute (used on <label> to link it to an input)
-  // becomes "htmlFor" in JSX. The reason is the same: "for" is a
-  // reserved keyword in JavaScript (it's used for for-loops).
-  //
-  // These two — className and htmlFor — are the most common attribute
-  // name differences between HTML and JSX. Most other HTML attributes
-  // keep their original names.
+// Just like a loader is a function that React Router calls before
+// rendering a route, an ACTION is a function that React Router calls
+// when a <Form> inside that route is submitted.
+//
+// The action function:
+//   1. Is exported from the same file as the route component (convention)
+//   2. Is imported with an alias in main.jsx (e.g., newPostAction) and
+//      assigned to the "action" property on the route definition
+//   3. Receives an object from React Router containing a "request"
+//      property — this is a standard Request object that React Router
+//      constructs from the form data (NOT a real HTTP request to a
+//      server — everything still runs client-side in the browser)
+//   4. Can be async — React Router waits for the Promise to resolve
+//
+// --- Extracting Form Data ---
+//
+// The request object has a formData() method that returns a Promise
+// resolving to a FormData object. FormData is a built-in browser API
+// that holds key-value pairs corresponding to each named form field.
+//
+// To convert FormData into a plain JavaScript object (e.g.,
+// { body: "...", author: "..." }), we use Object.fromEntries(formData).
+// This built-in utility creates a simple key-value object from any
+// iterable of [key, value] pairs — which is exactly what FormData
+// provides when iterated.
+//
+// The KEYS in the resulting object come from the "name" attribute on
+// each form input (e.g., name="body" → { body: "..." }). This is why
+// adding name attributes to the inputs is essential.
+//
+// --- redirect() ---
+//
+// After the action completes its work (sending data to the backend),
+// we want to navigate the user back to the posts list. The redirect()
+// function from react-router-dom creates a special Response object.
+// When an action returns a redirect Response, React Router reads the
+// target path from it and performs client-side navigation — just like
+// calling navigate(), but usable outside of component code (actions
+// run outside the React component tree, so hooks like useNavigate
+// are not available).
+export async function action({ request }) {
+  const formData = await request.formData();
+  const postData = Object.fromEntries(formData);
+  await fetch('http://localhost:8080/posts', {
+    method: 'POST',
+    body: JSON.stringify(postData),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+  return redirect('/');
+}
 
-  // The form input state now lives here again. Because only NewPost
-  // needs these values (to collect them on submit), there is no reason
-  // to lift them to a parent. Keeping state local avoids unnecessary
-  // prop drilling and limits re-renders to this component alone.
-  const [enteredBody, setEnteredBody] = useState('');
-  const [enteredAuthor, setEnteredAuthor] = useState('');
-
-  function bodyChangeHandler(event) {
-    // console.log(event.target.value);
-    setEnteredBody(event.target.value);
-  }
-
-  function authorChangeHandler(event) {
-    // console.log(event.target.value);
-    setEnteredAuthor(event.target.value);
-  }
-
-  // --- Handling Form Submission ---
-  //
-  // The onSubmit prop on a <form> element listens for the browser's
-  // native submit event. This event fires when the user clicks a
-  // submit button or presses Enter inside a form field.
-  //
-  // The handler receives the standard event object. The FIRST thing
-  // we do is call event.preventDefault(). Without this call, the
-  // browser would follow its default behavior: generate an HTTP
-  // request and send it to the server hosting the page. That would
-  // reload the page and lose all React state. Since React is a
-  // client-side library, we handle the data in JavaScript instead.
-  //
-  // After preventing the default, we bundle the current state values
-  // into a plain JavaScript object (postData). This object can then
-  // be passed to a parent via a callback prop, stored in a list, or
-  // sent to an API — whatever the application requires.
-  function submitHandler(event) {
-    event.preventDefault();
-    const postData = {
-      body: enteredBody,
-      author: enteredAuthor,
-    };
-    onAddPost(postData);
-  }
-
+// --- Simplified Component ---
+//
+// With the action handling data extraction and submission, and the
+// <Form> component handling the browser's default prevention, this
+// component no longer needs:
+//   - useState for form inputs
+//   - onChange handlers on inputs
+//   - onSubmit handler on the form
+//   - Any props from a parent (no onAddPost, no onCancel)
+//
+// The component is now purely presentational: it renders a form inside
+// a modal, and React Router handles everything else.
+function NewPost() {
   return (
-    // --- Modal Wrapper (Moved Here from PostsList) ---
+    // --- Modal Wrapper ---
     //
-    // The Modal component was previously rendered in PostsList, which
-    // wrapped NewPost inside it conditionally. Now that NewPost is its
-    // own route, it takes ownership of the Modal wrapper. This makes
-    // the component self-contained: navigating to /create-post renders
-    // NewPost, which automatically appears inside a modal overlay.
-    //
-    // Modal no longer needs an onClose prop — it handles backdrop clicks
-    // internally using useNavigate to go to the parent route ("..").
+    // Modal handles its own backdrop-click navigation (useNavigate to
+    // ".."), so no props are needed.
     <Modal>
-      <form className={classes.form} onSubmit={submitHandler}>
+      {/* --- React Router's <Form> Component ---
+
+          The Form component (capital F) from react-router-dom replaces
+          the standard HTML <form> element. It prevents the browser's
+          default submission behavior (no page reload, no HTTP request
+          to the hosting server) and instead:
+
+            1. Collects all named input values from the form
+            2. Constructs a Request object with the form data
+            3. Calls the ACTION function assigned to the currently
+               active route, passing the Request object to it
+
+          The method="post" prop is semantically important. It tells
+          React Router to set the method property on the constructed
+          Request object to "POST". No actual HTTP POST request is
+          sent by the Form component — this is still all client-side.
+          The method can be used inside the action to determine which
+          type of form was submitted (useful when a route has multiple
+          forms). Using "post" is also the semantically correct HTTP
+          verb for creating a new resource. */}
+      <Form method="post" className={classes.form}>
         <p>
           <label htmlFor="body">Text</label>
-          {/* onChange fires on every keystroke, updating enteredBody
-              via the state updater. The required attribute provides
-              basic browser-native validation — the form cannot be
-              submitted while this field is empty. */}
-          <textarea id="body" required rows={3} onChange={bodyChangeHandler} />
+          {/* --- The name Attribute ---
+
+              The HTML "name" attribute on form inputs is what allows
+              React Router (and the browser's FormData API) to identify
+              each field's value when the form is submitted. The name
+              becomes the KEY in the resulting FormData/Object:
+                name="body"   → { body: "user's text" }
+                name="author" → { author: "user's name" }
+
+              Without a name attribute, the input's value would not be
+              included in the form data at all.
+
+              The required attribute still provides browser-native
+              validation — the form cannot be submitted while the field
+              is empty. This works with React Router's Form just as it
+              does with a regular <form>. */}
+          <textarea id="body" name="body" required rows={3} />
         </p>
         <p>
           <label htmlFor="name">Your name</label>
-          <input type="text" id="name" required onChange={authorChangeHandler} />
+          <input type="text" id="name" name="author" required />
         </p>
-        {/* --- Buttons Inside a Form ---
+        {/* --- Cancel as a Link ---
 
-            By default, ANY <button> inside a <form> acts as a submit
-            button. Clicking it fires the form's submit event AND causes
-            the browser to generate an HTTP request to the server — the
-            traditional server-side form handling behavior.
-
-            In a React application we typically handle form data entirely
-            on the client side, so we do NOT want the browser's default
-            submission — that is why submitHandler calls preventDefault().
-
-            To stop a specific button from triggering submission at all,
-            set its type attribute to "button". A plain type="button"
-            element fires a click event but does NOT submit the form. */}
-        {/* --- Cancel as a Link Instead of a Button ---
-
-            Previously the cancel button called onCancel (a prop holding
-            App's hideModalHandler). With routing, "cancel" simply means
-            "navigate away from /create-post." A Link component is the
-            right tool for this — it creates an accessible <a> element
-            that triggers client-side navigation without a page reload.
-
-            The "to" prop specifies the navigation target. Using ".."
-            (a relative path) means "go up to the parent route." This
-            is analogous to "cd .." in a terminal. For /create-post,
-            the parent route is "/", so clicking Cancel takes the user
-            back to the posts list.
-
-            Using ".." instead of an absolute path like "/" makes the
-            component more portable — if the route structure changes
-            (e.g., /create-post moves under /posts/create-post), the
-            relative navigation still works correctly without edits. */}
+            Link to=".." navigates to the parent route (the posts list),
+            effectively closing the modal without submitting. */}
         <p className={classes.actions}>
           <Link to=".." type="button">
             Cancel
           </Link>
           <button>Submit</button>
         </p>
-      </form>
+      </Form>
     </Modal>
   );
 }

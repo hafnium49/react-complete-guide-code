@@ -61,7 +61,15 @@ import RootLayout from './routes/RootLayout';
 // we use an import alias to avoid name collisions: "loader as postsLoader".
 // This way, each route's loader has a unique name in main.jsx.
 import Posts, { loader as postsLoader } from './routes/Posts';
-import NewPost from './routes/NewPost';
+// --- Importing the Action Alongside the Component ---
+//
+// The same aliasing pattern used for loaders applies to actions. The
+// NewPost route file exports both the component (default export) and
+// an action function (named export). We import the action with an
+// alias (newPostAction) to avoid name clashes with actions from other
+// routes. The action will be assigned to the "action" property on the
+// /create-post route definition.
+import NewPost, { action as newPostAction } from './routes/NewPost';
 import './index.css';
 
 // --- Nested Layout Routes ---
@@ -124,7 +132,17 @@ const router = createBrowserRouter([
         path: '/',
         element: <Posts />,
         loader: postsLoader,
-        children: [{ path: '/create-post', element: <NewPost /> }],
+        // --- The action Property on a Route Definition ---
+        //
+        // Just as "loader" fetches data before a route renders,
+        // "action" handles data when a <Form> inside the route is
+        // submitted. React Router calls this function, passes it
+        // the form data wrapped in a Request object, and waits for
+        // it to complete. If the action returns a redirect(), React
+        // Router navigates to the specified path afterward.
+        children: [
+          { path: '/create-post', element: <NewPost />, action: newPostAction },
+        ],
       },
     ],
   },
