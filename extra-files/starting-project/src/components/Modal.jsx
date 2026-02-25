@@ -57,13 +57,57 @@
 // runtime. Destructuring is simply shorter and makes it immediately
 // clear which props the component expects.
 
+// --- useNavigate: Programmatic Navigation ---
+//
+// React Router provides two ways to navigate between routes:
+//
+//   1. DECLARATIVE — the Link component (renders an <a> element).
+//      Used when navigation is triggered by clicking a visible link
+//      or button in the UI.
+//
+//   2. PROGRAMMATIC — the useNavigate hook.
+//      Used when navigation must happen as a SIDE EFFECT of some
+//      action — e.g., after the user clicks a div (not a link),
+//      after a form submission succeeds, after a timer expires, etc.
+//      Anywhere you need to navigate from inside JavaScript code
+//      rather than from a clickable link element.
+//
+// useNavigate is a HOOK provided by react-router-dom (not by React
+// itself). React's hook system is extensible — third-party libraries
+// can create and export their own hooks, and you can even build
+// custom hooks yourself. All hooks follow the same rules: they must
+// be called at the top level of a component function, not inside
+// conditions, loops, or nested functions.
+//
+// Calling useNavigate() returns a FUNCTION (commonly stored in a
+// variable called "navigate"). You invoke that function with a path
+// string to trigger navigation:
+//   navigate('/some-path')   — navigate to an absolute path
+//   navigate('..')           — navigate to the PARENT route
+//
+// The ".." syntax works like the "cd .." command in a terminal: it
+// moves up one level in the route hierarchy. This makes components
+// more reusable because they do not need to know their absolute URL
+// — they just say "go to my parent." If the route structure changes,
+// the relative navigation still works correctly.
+import { useNavigate } from 'react-router-dom';
+
 import classes from './Modal.module.css';
 
-// Destructuring now extracts two props: children (the wrapped content)
-// and onClose (a handler function passed by the parent). Destructuring
-// multiple props at once makes the component's "API" easy to see at a
-// glance — you know immediately which props this component expects.
-function Modal({ children, onClose }) {
+// --- Self-Contained Navigation in Modal ---
+//
+// Previously, Modal received an onClose callback prop from its parent.
+// The parent was responsible for deciding WHAT should happen when the
+// backdrop was clicked (e.g., calling setModalIsVisible(false)).
+//
+// With routing, the modal's visibility is determined by the URL, not
+// by a boolean state. Closing the modal means NAVIGATING AWAY from
+// the current route (e.g., from /create-post back to /). Modal can
+// now handle this internally using useNavigate — it no longer needs
+// an onClose prop from the parent. This assumption works as long as
+// Modal is always used as a wrapper inside a route component, and
+// "closing" always means "go back to the parent route."
+function Modal({ children }) {
   // --- The HTML <dialog> Element ---
   //
   // <dialog> is a built-in HTML element designed specifically for modal
@@ -83,20 +127,29 @@ function Modal({ children, onClose }) {
   // passing true. This shorthand works for any boolean prop, not just
   // built-in HTML attributes.
 
+  // Call the hook at the top level to obtain the navigate function.
+  // This function can then be used anywhere inside the component —
+  // in event handlers, effects, or other callbacks.
+  const navigate = useNavigate();
+
+  // This handler will be attached to the backdrop div's onClick.
+  // Instead of calling a parent-provided callback, it uses the
+  // navigate function to move to the parent route (".."). The user
+  // sees the modal disappear because React Router unmounts this
+  // route's element and renders the parent route's content instead.
+  function closeHandler() {
+    navigate('..');
+  }
+
   // The Fragment (<>...</>) wraps the backdrop <div> and the <dialog>
   // because a component must return a single root element. The backdrop
   // sits behind the dialog to dim the rest of the page.
   return (
     <>
-      {/* Clicking the backdrop should close the modal. The onClose
-          function was passed in by the parent (PostsList) — it calls
-          setModalIsVisible(false) to update PostsList's state. By
-          attaching it to onClick here, we connect a user interaction
-          in the child (Modal) to a state change in the parent. This
-          is the same lifted-state pattern used elsewhere: the event
-          happens in the child, the state lives in the parent, and a
-          handler function bridges the two via props. */}
-      <div className={classes.backdrop} onClick={onClose} />
+      {/* Clicking the backdrop triggers closeHandler, which navigates
+          to the parent route. This replaces the old onClose prop
+          pattern with router-based navigation. */}
+      <div className={classes.backdrop} onClick={closeHandler} />
       <dialog open className={classes.modal}>
         {/* Render whatever content was placed between <Modal> and
             </Modal> in the parent component. This is the power of

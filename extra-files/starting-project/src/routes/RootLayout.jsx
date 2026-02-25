@@ -56,16 +56,14 @@ import MainHeader from '../components/MainHeader';
 // The component tree with this layout looks like:
 //   RouterProvider
 //     └─ RootLayout          (layout route for "/")
-//          ├─ MainHeader     (always visible)
+//          ├─ MainHeader     (always visible — contains Link to /create-post)
 //          └─ <Outlet />     (swaps between child routes)
-//               ├─ App       (when URL is "/")
-//               └─ NewPost   (when URL is "/create-post")
+//               └─ Posts     (nested layout route for "/")
+//                    ├─ <Outlet />  (renders NewPost modal when active)
+//                    └─ PostsList   (always visible under Posts)
 //
-// Note: At this stage, the App component still renders its OWN
-// MainHeader internally, so the header will appear TWICE on the "/"
-// route — once from RootLayout and once from App. This duplication
-// will be cleaned up in the next refactoring step by removing
-// MainHeader from App, since the layout route now handles it.
+// MainHeader now handles its own navigation internally using Link
+// (no props needed from RootLayout), so it is rendered with no props.
 function RootLayout() {
   return (
     <>

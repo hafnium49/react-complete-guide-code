@@ -34,6 +34,11 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   cursor: pointer;
   font-weight: bold;
+  /* Since the "New Post" button is now a Link (<a> element) instead of
+     a <button>, the browser applies default anchor styling — including
+     an underline. text-decoration: none removes it so the link looks
+     like the button it was before. */
+  text-decoration: none;
 }
 
 .button:hover {

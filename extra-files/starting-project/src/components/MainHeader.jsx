@@ -22,28 +22,40 @@
 // Using named imports like this lets the bundler (Vite) include ONLY the
 // icons you actually use, rather than the entire icon library.
 
-// --- Prop Naming Convention for Function Props ---
-//
-// When a prop is expected to receive a function (typically an event
-// handler), a common convention is to prefix the prop name with "on"
-// (e.g., onCreatePost, onClose, onBodyChange). This signals to other
-// developers that the prop expects a function — not a string or number —
-// and that it will likely be connected to an event listener somewhere
-// inside the component. The convention is not enforced by React; you
-// could name the prop anything, but the "on" prefix is widely adopted
-// because it mirrors React's built-in event props (onClick, onChange).
-
 import { MdPostAdd, MdMessage } from 'react-icons/md';
+
+// --- Link: Client-Side Navigation Without Page Reloads ---
+//
+// The Link component from react-router-dom replaces the standard HTML
+// <a> (anchor) element for navigation within a React Router application.
+//
+// Why not use a plain <a href="/create-post">?
+// An anchor element triggers the browser's DEFAULT navigation behavior:
+// it sends a brand new HTTP request to the server, downloads the entire
+// HTML page and all JavaScript bundles again, and starts the React app
+// from scratch. Any in-memory state (fetched data, form inputs, etc.)
+// is lost, and the user experiences a visible page reload.
+//
+// Link renders an <a> element under the hood but PREVENTS the default
+// browser behavior. Instead, it tells React Router to update the URL
+// in the address bar and render the matching route's component — all
+// without leaving the single-page application. The result is instant,
+// seamless navigation with no network request for a new HTML page.
+//
+// Link uses a "to" prop (instead of "href") to specify the target path.
+import { Link } from 'react-router-dom';
 
 import classes from './MainHeader.module.css';
 
-// The onCreatePost prop receives a handler function from the parent
-// (App). When the "New Post" button is clicked, this function runs,
-// which sets the modal visibility state to true in App, causing the
-// modal to appear. This is the same lifted-state pattern used elsewhere
-// — the event happens here, the state lives in an ancestor, and a
-// handler function bridges the two.
-function MainHeader({ onCreatePost }) {
+// --- No More onCreatePost Prop ---
+//
+// Previously, MainHeader received an onCreatePost handler from the
+// parent (App) which toggled modal visibility state. With routing,
+// opening the new-post form is simply a matter of NAVIGATING to the
+// /create-post URL. The Link component handles this internally — no
+// prop from a parent is needed. This eliminates one more piece of
+// lifted state and simplifies the component's interface.
+function MainHeader() {
   return (
     <header className={classes.header}>
       <h1 className={classes.logo}>
@@ -53,14 +65,16 @@ function MainHeader({ onCreatePost }) {
         React Poster
       </h1>
       <p>
-        {/* The onClick prop connects the button's click event to the
-            onCreatePost function passed in by the parent. Clicking this
-            button will open the new-post modal. The size prop on
-            MdPostAdd controls the icon's pixel dimensions. */}
-        <button className={classes.button} onClick={onCreatePost}>
+        {/* The "to" prop specifies the route path to navigate to.
+            Clicking this Link updates the URL to /create-post and
+            React Router renders the NewPost component — all without
+            a page reload. The Link renders as an <a> in the DOM,
+            so it's accessible and supports standard link behaviors
+            (right-click → open in new tab, etc.). */}
+        <Link to="/create-post" className={classes.button}>
           <MdPostAdd size={18} />
           New Post
-        </button>
+        </Link>
       </p>
     </header>
   );

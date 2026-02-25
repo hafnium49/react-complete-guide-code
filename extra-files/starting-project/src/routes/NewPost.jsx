@@ -27,19 +27,28 @@
 
 import { useState } from 'react';
 
+// --- Link for Cancel Navigation ---
+//
+// The cancel button has been replaced with a Link component. Instead
+// of calling an onCancel callback prop (which no longer exists), it
+// navigates to the parent route ("..") when clicked — closing the
+// modal by leaving the /create-post route. This follows the same
+// pattern used in MainHeader: declarative navigation via Link for
+// user-initiated click actions.
+import { Link } from 'react-router-dom';
+
 import Modal from '../components/Modal';
 import classes from './NewPost.module.css';
 
 // --- Self-Contained Route Component ---
 //
-// Because NewPost is now a route component rather than a child rendered
-// by PostsList, it no longer receives onCancel or onAddPost as props.
-// The cancel/close behavior and form submission logic will need to be
-// handled differently — using React Router's navigation features
-// (covered in an upcoming lesson). For now, these props are still
-// listed but will not function correctly when the component is loaded
-// via its route, since no parent is passing them.
-function NewPost({ onCancel, onAddPost }) {
+// With routing handling both opening (Link in MainHeader) and closing
+// (navigate in Modal, Link for cancel), this component no longer needs
+// onCancel as a prop. The onAddPost prop is also not received from any
+// parent when this component is loaded as a route. Form submission
+// handling will be reworked in an upcoming lesson using React Router's
+// action functions.
+function NewPost({ onAddPost }) {
   // --- htmlFor (not for) ---
   //
   // Just as the HTML "class" attribute becomes "className" in JSX,
@@ -92,7 +101,6 @@ function NewPost({ onCancel, onAddPost }) {
       author: enteredAuthor,
     };
     onAddPost(postData);
-    onCancel();
   }
 
   return (
@@ -104,10 +112,9 @@ function NewPost({ onCancel, onAddPost }) {
     // the component self-contained: navigating to /create-post renders
     // NewPost, which automatically appears inside a modal overlay.
     //
-    // The onClose prop on Modal will need a navigation function to go
-    // back to "/" when the backdrop is clicked. That wiring will be
-    // added in an upcoming lesson using React Router's navigation API.
-    <Modal onClose={onCancel}>
+    // Modal no longer needs an onClose prop — it handles backdrop clicks
+    // internally using useNavigate to go to the parent route ("..").
+    <Modal>
       <form className={classes.form} onSubmit={submitHandler}>
         <p>
           <label htmlFor="body">Text</label>
@@ -135,10 +142,28 @@ function NewPost({ onCancel, onAddPost }) {
             To stop a specific button from triggering submission at all,
             set its type attribute to "button". A plain type="button"
             element fires a click event but does NOT submit the form. */}
+        {/* --- Cancel as a Link Instead of a Button ---
+
+            Previously the cancel button called onCancel (a prop holding
+            App's hideModalHandler). With routing, "cancel" simply means
+            "navigate away from /create-post." A Link component is the
+            right tool for this — it creates an accessible <a> element
+            that triggers client-side navigation without a page reload.
+
+            The "to" prop specifies the navigation target. Using ".."
+            (a relative path) means "go up to the parent route." This
+            is analogous to "cd .." in a terminal. For /create-post,
+            the parent route is "/", so clicking Cancel takes the user
+            back to the posts list.
+
+            Using ".." instead of an absolute path like "/" makes the
+            component more portable — if the route structure changes
+            (e.g., /create-post moves under /posts/create-post), the
+            relative navigation still works correctly without edits. */}
         <p className={classes.actions}>
-          <button type="button" onClick={onCancel}>
+          <Link to=".." type="button">
             Cancel
-          </button>
+          </Link>
           <button>Submit</button>
         </p>
       </form>

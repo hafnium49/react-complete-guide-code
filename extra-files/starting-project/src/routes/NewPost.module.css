@@ -1,15 +1,18 @@
 /* Scoped styles for the NewPost form component.
    The .form class styles the form container; nested selectors style the
    labels, inputs, textarea, and action buttons within it.
-   The .actions class (for submit/cancel buttons) will be used in a later
-   lesson when form submission is implemented.
 
    Note: border-radius, box-shadow, and margin were previously on .form
    but have been REMOVED now that Modal wraps this component. The Modal's
    <dialog> element provides the rounded corners and shadow via
    Modal.module.css, and centering is handled by the dialog's default
    positioning. Keeping those styles here would double them up or conflict
-   with Modal's layout. */
+   with Modal's layout.
+
+   The .actions a rule styles the cancel Link (which replaced the cancel
+   <button>). Since Link renders as an <a> element in the DOM, it needs
+   its own styles separate from the button selector — the browser applies
+   different defaults to anchors vs buttons (underline, color, etc.). */
 
 .form {
   background-color: #6233b9;
@@ -39,6 +42,7 @@
 .actions {
   display: flex;
   justify-content: flex-end;
+  align-items: center;
   gap: 0.5rem;
 }
 
@@ -56,10 +60,15 @@
   background-color: #23014a;
 }
 
-.actions button[type='button'] {
+/* Style the cancel Link to look like a transparent text button rather
+   than a typical underlined hyperlink. The background is transparent so
+   it visually recedes next to the solid Submit button. */
+.actions a {
   background-color: transparent;
+  text-decoration: none;
+  color: #e5d5f7;
 }
 
-.actions button[type='button']:hover {
+.actions a:hover {
   color: #d1bee6;
 }
