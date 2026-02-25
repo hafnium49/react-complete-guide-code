@@ -63,6 +63,15 @@
   font-style: italic;
 }
 
+/* The Link component renders an <a> element in the DOM. By default,
+ * browsers underline anchor text. This rule removes that underline
+ * so the post item looks clean and consistent with the rest of the UI.
+ * The .post scope ensures this only affects links inside post items. */
+.post a {
+  text-decoration: none;
+  color: inherit;
+}
+
 @keyframes animate-in {
   from {
     opacity: 0;

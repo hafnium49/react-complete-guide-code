@@ -89,9 +89,11 @@ function PostsList() {
           rather than re-rendering the entire list from scratch.
 
           The value must be UNIQUE among siblings. Ideally it should
-          be a stable identifier like a database ID. Here we use
-          post.body as a stand-in; in a production app you would use
-          a proper unique ID to avoid collisions.
+          be a stable identifier like a database ID. Now that posts
+          come from the backend and each has a unique id property,
+          we use post.id instead of post.body — it is a reliable
+          unique identifier that won't collide even if two posts
+          have the same text.
 
           Omitting key still works, but React logs a warning and may
           exhibit subtle bugs with reordering or component state. */}
@@ -110,7 +112,7 @@ function PostsList() {
       {posts.length > 0 && (
         <ul className={classes.posts}>
           {posts.map((post) => (
-            <Post key={post.body} author={post.author} body={post.body} />
+            <Post key={post.id} id={post.id} author={post.author} body={post.body} />
           ))}
         </ul>
       )}

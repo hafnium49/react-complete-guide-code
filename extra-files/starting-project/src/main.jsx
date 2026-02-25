@@ -7,7 +7,7 @@
 // The planned routes for this demo application are:
 //   /             → the starting page showing all posts
 //   /create-post  → the new-post form (its own URL, shareable/bookmarkable)
-//   /posts/:id    → a detail page for a single post (future lesson)
+//   /:id          → a detail page for a single post (dynamic parameter)
 //
 // Each route is an object with at least two properties:
 //   path    — the URL path segment to match (e.g., "/" or "/create-post")
@@ -70,6 +70,14 @@ import Posts, { loader as postsLoader } from './routes/Posts';
 // routes. The action will be assigned to the "action" property on the
 // /create-post route definition.
 import NewPost, { action as newPostAction } from './routes/NewPost';
+// --- Importing Multiple Loaders with Aliases ---
+//
+// This is exactly why import aliases are essential. Both Posts.jsx and
+// PostDetails.jsx export a function called "loader". Without aliases,
+// importing both would cause a name collision. By renaming them to
+// postsLoader and postDetailsLoader respectively, each loader has a
+// unique identifier in this file.
+import PostDetails, { loader as postDetailsLoader } from './routes/PostDetails';
 import './index.css';
 
 // --- Nested Layout Routes ---
@@ -85,16 +93,16 @@ import './index.css';
 //     <main> section. Because Posts has the same path as its parent,
 //     it matches the root URL and renders inside RootLayout's Outlet.
 //
-//   Level 3: NewPost (path "/create-post")
-//     A child of Posts. When the URL is /create-post, NewPost renders
-//     inside Posts' Outlet — which sits ABOVE the post list. Since
-//     NewPost wraps itself in a Modal, it appears as an overlay on
-//     top of the posts, achieving the desired stacked look.
+//   Level 3: NewPost (path "/create-post") and PostDetails (path "/:id")
+//     Children of Posts. Both render inside Posts' Outlet — which sits
+//     ABOVE the post list. Since both wrap themselves in a Modal, they
+//     appear as overlays on top of the posts list.
 //
 // The full nesting visualized:
-//   RootLayout          → MainHeader + Outlet
-//     └─ Posts           → Outlet + <main><PostsList /></main>
-//          └─ NewPost    → Modal overlay with the form
+//   RootLayout              → MainHeader + Outlet
+//     └─ Posts              → Outlet + <main><PostsList /></main>
+//          ├─ NewPost       → Modal overlay with the form
+//          └─ PostDetails   → Modal overlay with post details
 //
 // When the URL is just "/":
 //   RootLayout renders MainHeader, its Outlet renders Posts,
@@ -105,6 +113,10 @@ import './index.css';
 //   RootLayout renders MainHeader, its Outlet renders Posts,
 //   Posts' Outlet renders NewPost (as a modal), and PostsList
 //   still displays below — giving the overlay-on-list appearance.
+//
+// When the URL is "/:id" (e.g., "/0.123456789"):
+//   Same structure — PostDetails renders in Posts' Outlet as a modal,
+//   while PostsList remains visible underneath.
 //
 // --- The loader Property on a Route Definition ---
 //
@@ -142,6 +154,28 @@ const router = createBrowserRouter([
         // Router navigates to the specified path afterward.
         children: [
           { path: '/create-post', element: <NewPost />, action: newPostAction },
+          // --- Dynamic Route Parameters ---
+          //
+          // A colon (:) before a segment name creates a DYNAMIC route
+          // parameter — a placeholder that matches ANY value in the URL.
+          // The path "/:id" will match /abc, /123, /0.987654321, etc.
+          //
+          // The name after the colon ("id") becomes the KEY used to
+          // retrieve the actual value inside loaders, actions, and
+          // components. If this were ":postId" instead, you would
+          // access it as params.postId in the loader.
+          //
+          // This route is an absolute path (starts with /). It could
+          // also be written as a relative path (just ":id" without the
+          // leading slash), which would be appended to the parent's
+          // path — producing the same result since the parent path
+          // is "/". The same applies to "/create-post" above.
+          //
+          // The loader (postDetailsLoader) fetches the single post
+          // matching the ID from the backend before the component
+          // renders, following the same fetch-then-render pattern
+          // used by the posts list loader.
+          { path: '/:id', element: <PostDetails />, loader: postDetailsLoader },
         ],
       },
     ],
