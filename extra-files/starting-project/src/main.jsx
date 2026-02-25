@@ -51,7 +51,16 @@ import ReactDOM from 'react-dom/client';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 
 import RootLayout from './routes/RootLayout';
-import Posts from './routes/Posts';
+// --- Importing the Loader Alongside the Component ---
+//
+// A route's loader function is typically exported from the same file as
+// the route component. Here we import both: Posts (the default export,
+// the component) and loader (a named export, the data-fetching function).
+//
+// Since multiple route files may each export a function called "loader",
+// we use an import alias to avoid name collisions: "loader as postsLoader".
+// This way, each route's loader has a unique name in main.jsx.
+import Posts, { loader as postsLoader } from './routes/Posts';
 import NewPost from './routes/NewPost';
 import './index.css';
 
@@ -89,10 +98,23 @@ import './index.css';
 //   Posts' Outlet renders NewPost (as a modal), and PostsList
 //   still displays below — giving the overlay-on-list appearance.
 //
-// NOTE: The cancel/close buttons and the "New Post" button do not
-// work yet because they still rely on the old prop-based modal
-// toggling. These will be wired up using React Router's navigation
-// features in upcoming lessons.
+// --- The loader Property on a Route Definition ---
+//
+// In addition to path, element, and children, a route definition can
+// include a "loader" property. Its value is a function that React Router
+// calls BEFORE rendering the route's element.
+//
+// The sequence when a user navigates to "/" is:
+//   1. React Router matches the "/" path to the Posts route.
+//   2. It calls postsLoader() and waits for the returned Promise to
+//      resolve (the async fetch to the backend).
+//   3. Once the data is available, it renders <Posts /> (and any nested
+//      children). The fetched data is accessible inside Posts or any
+//      descendant component via the useLoaderData hook.
+//
+// This "fetch-then-render" approach eliminates the need for useState
+// and useEffect inside the component. The component always has its
+// data ready when it first renders.
 const router = createBrowserRouter([
   {
     path: '/',
@@ -101,6 +123,7 @@ const router = createBrowserRouter([
       {
         path: '/',
         element: <Posts />,
+        loader: postsLoader,
         children: [{ path: '/create-post', element: <NewPost /> }],
       },
     ],

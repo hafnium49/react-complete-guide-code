@@ -110,8 +110,16 @@ app.get('/posts', async (req, res) => {
   // artificial delay, but it is useful during development to test how
   // the frontend handles loading states. Without this delay, localhost
   // responses are nearly instant, making it impossible to see loading
-  // indicators. Comment this line back out to restore instant responses.
-  await new Promise((resolve, reject) => setTimeout(() => resolve(), 1500));
+  // indicators.
+  //
+  // With the React Router loader feature now handling data fetching,
+  // the delay is commented out again. The loader runs BEFORE the route
+  // element renders, so a slow response would cause the entire page to
+  // appear blank until the data arrives (since there is no isFetching
+  // loading indicator anymore). With instant responses, the loader
+  // completes almost immediately and the page renders without any
+  // visible delay — providing a smooth user experience.
+  // await new Promise((resolve, reject) => setTimeout(() => resolve(), 1500));
   res.json({ posts: storedPosts });
 });
 

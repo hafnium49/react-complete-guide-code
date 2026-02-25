@@ -41,6 +41,66 @@ import { Outlet } from 'react-router-dom';
 
 import PostsList from '../components/PostsList';
 
+// --- Route Loaders (React Router v6.4+) ---
+//
+// React Router v6.4 introduced a powerful data-loading feature: the
+// "loader" property on route definitions. A loader is a FUNCTION that
+// React Router calls BEFORE rendering the route's element. Its job is
+// to fetch or prepare whatever data the route (or its nested components)
+// will need.
+//
+// Key characteristics of loaders:
+//
+//   1. EXECUTION TIMING — The loader runs BEFORE the route component
+//      renders. React Router waits for the loader to complete, then
+//      renders the element with the data already available. This is
+//      fundamentally different from useEffect, which runs AFTER the
+//      first render (causing a "render → fetch → re-render" cycle).
+//
+//   2. RUNS ON THE CLIENT — Despite being defined outside of a component,
+//      the loader still executes in the browser. It has access to the
+//      same browser APIs (fetch, localStorage, etc.) as any other
+//      client-side code.
+//
+//   3. CAN BE ASYNC — If the loader returns a Promise (e.g., because it
+//      uses async/await), React Router automatically waits for the
+//      Promise to resolve before rendering. This means you can use
+//      async/await freely without the workarounds needed with useEffect.
+//
+//   4. RETURN VALUE — Whatever the loader returns becomes available to
+//      the route's element (and any nested component) via the
+//      useLoaderData hook. You typically return the data the component
+//      needs (e.g., an array of posts).
+//
+//   5. CONVENTION — The loader function is commonly defined and exported
+//      from the SAME file as the route component it serves. This keeps
+//      related code together. The function is typically named "loader"
+//      and imported with an alias in main.jsx (e.g., postsLoader) to
+//      avoid name clashes when multiple routes each have their own loader.
+//
+// --- Why Loaders Replace useEffect for Route Data ---
+//
+// With useEffect, the component renders first (showing empty or loading
+// state), THEN fires the effect to fetch data, THEN re-renders with the
+// fetched data. This requires managing useState for the data and often
+// a separate isFetching state for loading indicators.
+//
+// With a loader, the data is fetched BEFORE the component renders, so
+// the component can be written as if the data is always available. No
+// useState for the fetched data. No useEffect. No isFetching boolean.
+// The result is significantly less code inside the component.
+//
+// Trade-off: because the loader must finish before the element renders,
+// a slow backend can cause a visible delay where nothing appears on
+// screen. React Router provides advanced features (deferred data,
+// loading UI) to handle slow backends, but those are beyond the scope
+// of this crash course.
+export async function loader() {
+  const response = await fetch('http://localhost:8080/posts');
+  const resData = await response.json();
+  return resData.posts;
+}
+
 function Posts() {
   // The Outlet is placed BEFORE the <main> block. When a child route
   // is active (e.g., /create-post), its element (NewPost wrapped in a
