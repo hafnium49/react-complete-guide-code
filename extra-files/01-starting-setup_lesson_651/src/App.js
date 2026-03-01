@@ -151,6 +151,15 @@ function App() {
   // generic name. Both approaches are perfectly valid — the choice
   // depends on your preference and the use case. For clarity while
   // learning, this course continues with individual props.
+  //
+  // --- Self-Closing Component Tags ---
+  //
+  // When a component has no children (no content between the
+  // opening and closing tags), you can use a self-closing tag
+  // with a trailing slash instead of writing separate opening
+  // and closing tags. This is purely a style choice — both forms
+  // are functionally identical — but self-closing tags are the
+  // common convention for childless components in React projects.
   return (
     <div>
       <h2>Let's get started!</h2>
@@ -158,22 +167,22 @@ function App() {
         title={expenses[0].title}
         amount={expenses[0].amount}
         date={expenses[0].date}
-      ></ExpenseItem>
+      />
       <ExpenseItem
         title={expenses[1].title}
         amount={expenses[1].amount}
         date={expenses[1].date}
-      ></ExpenseItem>
+      />
       <ExpenseItem
         title={expenses[2].title}
         amount={expenses[2].amount}
         date={expenses[2].date}
-      ></ExpenseItem>
+      />
       <ExpenseItem
         title={expenses[3].title}
         amount={expenses[3].amount}
         date={expenses[3].date}
-      ></ExpenseItem>
+      />
     </div>
   );
 }

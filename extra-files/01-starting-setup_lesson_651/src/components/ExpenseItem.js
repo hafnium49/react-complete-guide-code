@@ -66,6 +66,16 @@
 // insertion could treat the return as "return undefined;" before
 // it ever sees the JSX on the next line.
 
+// --- Importing a Sibling Component ---
+//
+// ExpenseDate is a child component that we extracted from this
+// file to keep ExpenseItem focused. The import path uses "./"
+// because both files live in the same components/ folder. When
+// importing from the SAME directory, "./" means "look right here."
+// (Contrast this with the import in App.js which uses
+// "./components/ExpenseItem" because App.js lives one level up.)
+import ExpenseDate from './ExpenseDate';
+
 // --- Importing CSS for a Component ---
 //
 // To apply styles to a component, create a CSS file next to the
@@ -151,38 +161,6 @@ function ExpenseItem(props) {
   // carry data into the component; whether that data comes from a
   // variable or a literal is irrelevant to the mechanism.
   //
-  // --- Extracting Logic into Helper Constants ---
-  //
-  // Complex expressions (like date formatting calls) CAN be written
-  // inline between curly braces in JSX, and they will work. However,
-  // it is considered better practice to extract them into helper
-  // constants above the return statement. This keeps the JSX lean
-  // and readable — the template only references short variable names,
-  // while the heavier logic lives in the body of the function. As a
-  // general rule: if an expression is longer than a simple property
-  // access, pull it out into a named constant.
-  //
-  // --- Date Formatting with toLocaleString() ---
-  //
-  // The Date object's built-in toLocaleString() method converts a
-  // date into a human-readable string. It accepts two arguments:
-  //   1. A locale string (e.g., 'en-US') that determines the language
-  //   2. An options object that controls which part of the date to
-  //      format and how to format it
-  //
-  // This is standard JavaScript — not React-specific. You can look
-  // up "MDN toLocaleString" for the full list of formatting options.
-  //
-  // { month: 'long' } produces the full month name (e.g., "August").
-  // { day: '2-digit' } produces a zero-padded day (e.g., "14").
-  const month = props.date.toLocaleString('en-US', { month: 'long' });
-  const day = props.date.toLocaleString('en-US', { day: '2-digit' });
-
-  // getFullYear() is another built-in Date method that returns the
-  // year as a four-digit number (e.g., 2021). Unlike toLocaleString,
-  // it takes no arguments and returns a plain number, not a string.
-  const year = props.date.getFullYear();
-
   // --- className Instead of class ---
   //
   // In standard HTML, you assign CSS classes with the "class"
@@ -198,21 +176,37 @@ function ExpenseItem(props) {
   // (Block__Element) which is a popular CSS methodology for keeping
   // class names organized and avoiding collisions.
   //
-  // --- Calendar-Style Date Layout ---
+  // --- Using a Child Component (ExpenseDate) ---
   //
-  // The date is now displayed as three stacked divs (month, year,
-  // day) instead of a single toISOString() dump. Each div renders
-  // one of the helper constants defined above. This structure will
-  // be styled in a later lesson to resemble a small calendar card.
-  // The styling is not applied yet, so the raw text will appear
-  // without visual formatting for now.
+  // The date formatting logic and calendar-style JSX that were
+  // previously in this function have been extracted into a separate
+  // ExpenseDate component. This keeps ExpenseItem focused on the
+  // overall expense row layout while ExpenseDate handles the
+  // calendar badge rendering.
+  //
+  // We pass the date prop down to ExpenseDate via props. This is
+  // prop forwarding: the date originated in App.js, was passed to
+  // ExpenseItem, and is now forwarded one more level into
+  // ExpenseDate. Data always flows downward through the component
+  // tree, and you cannot skip intermediate components.
+  //
+  // --- Self-Closing Tags ---
+  //
+  // When a component has no content between its opening and closing
+  // tags (no children), you can write it as a self-closing element:
+  //
+  //   <ExpenseDate date={props.date} />
+  //
+  // instead of:
+  //
+  //   <ExpenseDate date={props.date}></ExpenseDate>
+  //
+  // Both are functionally identical. The self-closing form is more
+  // concise and is the common convention in React when there are
+  // no children to pass.
   return (
     <div className="expense-item">
-      <div>
-        <div>{month}</div>
-        <div>{year}</div>
-        <div>{day}</div>
-      </div>
+      <ExpenseDate date={props.date} />
       <div className="expense-item__description">
         <h2>{props.title}</h2>
         <div className="expense-item__price">${props.amount}</div>
