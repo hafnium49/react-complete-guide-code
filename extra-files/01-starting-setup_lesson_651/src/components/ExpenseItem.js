@@ -42,8 +42,40 @@
 // instead of executing your component function. The uppercase first
 // letter is what tells React to treat the tag as a custom component.
 
+// --- The Single Root Element Rule ---
+//
+// A JSX expression returned from a component must have exactly ONE
+// root element. You cannot return sibling elements side by side:
+//
+//   return <div>A</div><div>B</div>;  // ERROR — two root elements
+//
+// This fails because JSX is transformed into function calls behind
+// the scenes, and a function can only return ONE value. The simplest
+// fix is to wrap everything in a single parent element (like a div):
+//
+//   return <div>  <div>A</div>  <div>B</div>  </div>;  // OK
+//
+// There are other workarounds (like React Fragments) that will be
+// covered in a later lesson.
+//
+// --- Multi-Line JSX with Parentheses ---
+//
+// When JSX spans multiple lines, wrapping it in parentheses tells
+// JavaScript that the return statement continues beyond the first
+// line. Without parentheses, JavaScript's automatic semicolon
+// insertion could treat the return as "return undefined;" before
+// it ever sees the JSX on the next line.
+
 function ExpenseItem() {
-  return <h2>Expense item!</h2>;
+  return (
+    <div>
+      <div>March 28th 2021</div>
+      <div>
+        <h2>Car Insurance</h2>
+        <div>$249.67</div>
+      </div>
+    </div>
+  );
 }
 
 // The component must be exported so it can be imported and used in
