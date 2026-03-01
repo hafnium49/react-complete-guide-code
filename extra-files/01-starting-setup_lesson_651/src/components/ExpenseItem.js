@@ -145,16 +145,44 @@ function ExpenseItem(props) {
   //
   // Single curly braces { } inside JSX open a "dynamic expression"
   // slot. Here we access properties on the props object to render
-  // the data passed in by the parent:
-  //   {props.title}  — the expense title string
-  //   {props.amount} — the expense amount number
-  //   {props.date.toISOString()} — the date converted to a string
+  // the data passed in by the parent. The VALUES of props are not
+  // limited to dynamic expressions — you could also pass hardcoded
+  // strings or numbers directly as attribute values. Props simply
+  // carry data into the component; whether that data comes from a
+  // variable or a literal is irrelevant to the mechanism.
   //
-  // The Date object cannot be rendered directly as text — React
-  // would throw an error. Calling .toISOString() converts it to a
-  // readable string. The output format is not ideal yet; a better
-  // date display will be implemented in a later lesson.
+  // --- Extracting Logic into Helper Constants ---
   //
+  // Complex expressions (like date formatting calls) CAN be written
+  // inline between curly braces in JSX, and they will work. However,
+  // it is considered better practice to extract them into helper
+  // constants above the return statement. This keeps the JSX lean
+  // and readable — the template only references short variable names,
+  // while the heavier logic lives in the body of the function. As a
+  // general rule: if an expression is longer than a simple property
+  // access, pull it out into a named constant.
+  //
+  // --- Date Formatting with toLocaleString() ---
+  //
+  // The Date object's built-in toLocaleString() method converts a
+  // date into a human-readable string. It accepts two arguments:
+  //   1. A locale string (e.g., 'en-US') that determines the language
+  //   2. An options object that controls which part of the date to
+  //      format and how to format it
+  //
+  // This is standard JavaScript — not React-specific. You can look
+  // up "MDN toLocaleString" for the full list of formatting options.
+  //
+  // { month: 'long' } produces the full month name (e.g., "August").
+  // { day: '2-digit' } produces a zero-padded day (e.g., "14").
+  const month = props.date.toLocaleString('en-US', { month: 'long' });
+  const day = props.date.toLocaleString('en-US', { day: '2-digit' });
+
+  // getFullYear() is another built-in Date method that returns the
+  // year as a four-digit number (e.g., 2021). Unlike toLocaleString,
+  // it takes no arguments and returns a plain number, not a string.
+  const year = props.date.getFullYear();
+
   // --- className Instead of class ---
   //
   // In standard HTML, you assign CSS classes with the "class"
@@ -169,9 +197,22 @@ function ExpenseItem(props) {
   // ExpenseItem.css file. They follow the BEM naming convention
   // (Block__Element) which is a popular CSS methodology for keeping
   // class names organized and avoiding collisions.
+  //
+  // --- Calendar-Style Date Layout ---
+  //
+  // The date is now displayed as three stacked divs (month, year,
+  // day) instead of a single toISOString() dump. Each div renders
+  // one of the helper constants defined above. This structure will
+  // be styled in a later lesson to resemble a small calendar card.
+  // The styling is not applied yet, so the raw text will appear
+  // without visual formatting for now.
   return (
     <div className="expense-item">
-      <div>{props.date.toISOString()}</div>
+      <div>
+        <div>{month}</div>
+        <div>{year}</div>
+        <div>{day}</div>
+      </div>
       <div className="expense-item__description">
         <h2>{props.title}</h2>
         <div className="expense-item__price">${props.amount}</div>
