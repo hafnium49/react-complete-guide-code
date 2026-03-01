@@ -20,11 +20,38 @@
 // The return value describes the structure of the UI that this
 // component should produce. React takes this description and creates
 // the corresponding real DOM elements on the page.
+//
+// --- Declarative vs Imperative ---
+//
+// React follows a DECLARATIVE approach: you describe WHAT the UI
+// should look like (the desired end state), and React figures out
+// HOW to make the real DOM match that description.
+//
+// Without React, you would use an IMPERATIVE approach — writing
+// step-by-step instructions to manipulate the DOM yourself:
+//
+//   const para = document.createElement('p');
+//   para.textContent = 'This is also visible';
+//   document.getElementById('root').appendChild(para);
+//
+// This works for simple pages, but becomes extremely cumbersome for
+// complex UIs with dozens or hundreds of elements that appear,
+// disappear, and change dynamically. With the declarative approach,
+// you simply add a <p> element to the returned JSX below, and React
+// generates all the necessary DOM instructions behind the scenes.
+//
+// --- Hot Reloading ---
+//
+// The development server watches your source files. When you save a
+// change (like adding the paragraph below), it automatically picks
+// up the modification and updates the page in the browser without
+// a manual refresh. This tight feedback loop speeds up development.
 
 function App() {
   return (
     <div>
       <h2>Let's get started!</h2>
+      <p>This is also visible!</p>
     </div>
   );
 }
