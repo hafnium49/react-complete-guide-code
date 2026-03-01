@@ -1,3 +1,20 @@
+/* --- Global Styles ---
+ *
+ * This CSS file is imported by index.js. Importing a CSS file into a
+ * JavaScript file is NOT standard browser behavior — it only works
+ * because the build tool (Create React App's development server)
+ * intercepts the import and injects the styles into the page
+ * automatically.
+ *
+ * Styles defined here are GLOBAL — they apply to the entire page,
+ * not scoped to any particular component. This is the appropriate
+ * place for page-wide defaults like font family, background color,
+ * and box-sizing resets.
+ *
+ * The @import rule below loads a Google Font (Noto Sans JP) from an
+ * external CDN. This is standard CSS, not React-specific.
+ */
+
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap');
 
 * {
@@ -12,4 +29,3 @@ body {
   margin: 0;
   background-color: #3f3f3f;
 }
-
