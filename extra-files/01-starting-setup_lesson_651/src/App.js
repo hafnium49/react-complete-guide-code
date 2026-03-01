@@ -67,22 +67,92 @@
 import ExpenseItem from './components/ExpenseItem';
 
 function App() {
-  // --- Using a Custom Component in JSX ---
+  // --- Data Defined in the Parent Component ---
   //
-  // Custom components are used just like built-in HTML elements.
-  // Writing <ExpenseItem /> tells React to call the ExpenseItem
-  // function and render whatever JSX it returns into this spot in
-  // the DOM. The uppercase first letter is what distinguishes it
-  // from a native HTML element.
+  // The expense data lives here in App — the parent component —
+  // rather than inside ExpenseItem. This is intentional: the
+  // ExpenseItem component should be a reusable template that can
+  // display ANY expense, not just one specific hardcoded expense.
   //
-  // The three steps for using a custom component are always:
-  //   1. Create it (define the function, return JSX)
-  //   2. Export it (export default)
-  //   3. Import it in the file where you want to use it
+  // In a real application, this data would come from a database
+  // or an API. For now, we define it as a local array of objects.
+  // Each object represents one expense with an id, title, amount,
+  // and date. The id field is not used yet but will be useful
+  // later when rendering lists dynamically.
+  const expenses = [
+    {
+      id: 'e1',
+      title: 'Toilet Paper',
+      amount: 94.12,
+      date: new Date(2020, 7, 14),
+    },
+    { id: 'e2', title: 'New TV', amount: 799.49, date: new Date(2021, 2, 12) },
+    {
+      id: 'e3',
+      title: 'Car Insurance',
+      amount: 294.67,
+      date: new Date(2021, 2, 28),
+    },
+    {
+      id: 'e4',
+      title: 'New Desk (Wooden)',
+      amount: 450,
+      date: new Date(2021, 5, 12),
+    },
+  ];
+
+  // --- Props: Passing Data to Child Components ---
+  //
+  // Props (short for "properties") are React's mechanism for passing
+  // data from a PARENT component to a CHILD component. They work
+  // like HTML attributes: you add custom attributes to the component
+  // tag, and the child receives them as properties on an object.
+  //
+  // Here, each <ExpenseItem> receives three attributes:
+  //   title  — the expense title (a string)
+  //   amount — the expense amount (a number)
+  //   date   — the expense date (a Date object)
+  //
+  // The NAMES of these attributes are entirely your choice. They
+  // become the keys on the props object that the child component
+  // receives. Whatever name you choose here (e.g., "title") must
+  // match what you access in the child (e.g., props.title).
+  //
+  // The VALUES are set dynamically using curly braces to pull data
+  // from the expenses array. For example, {expenses[0].title}
+  // accesses the title property of the first object in the array.
+  //
+  // --- Reusing Components with Different Data ---
+  //
+  // This is the core power of props: we use the SAME component
+  // (ExpenseItem) four times, but each instance receives DIFFERENT
+  // data through its props. The component renders differently each
+  // time based on the props it receives — same code, different
+  // output. This is analogous to calling a function multiple times
+  // with different arguments.
   return (
     <div>
       <h2>Let's get started!</h2>
-      <ExpenseItem></ExpenseItem>
+      <ExpenseItem
+        title={expenses[0].title}
+        amount={expenses[0].amount}
+        date={expenses[0].date}
+      ></ExpenseItem>
+      <ExpenseItem
+        title={expenses[1].title}
+        amount={expenses[1].amount}
+        date={expenses[1].date}
+      ></ExpenseItem>
+      <ExpenseItem
+        title={expenses[2].title}
+        amount={expenses[2].amount}
+        date={expenses[2].date}
+      ></ExpenseItem>
+      <ExpenseItem
+        title={expenses[3].title}
+        amount={expenses[3].amount}
+        date={expenses[3].date}
+      ></ExpenseItem>
     </div>
   );
 }

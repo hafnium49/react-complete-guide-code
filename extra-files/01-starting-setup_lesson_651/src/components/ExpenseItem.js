@@ -82,46 +82,52 @@
 // keeps related files together and makes them easy to find.
 import './ExpenseItem.css';
 
-function ExpenseItem() {
-  // --- JavaScript Logic Inside Components ---
-  //
-  // A component is just a function, and before the return statement
-  // you can write any standard JavaScript: declare variables, call
-  // functions, perform calculations, fetch data from an API, etc.
-  // None of this is React-specific — it is ordinary JavaScript that
-  // runs every time React calls this component function.
-  //
-  // Here we store the expense data in constants rather than hard-
-  // coding it directly in the JSX. This is a first step toward
-  // making the component dynamic. Later, these values will come
-  // from props (data passed in by the parent component) instead of
-  // being defined locally.
-  //
-  // The Date constructor is standard JavaScript — new Date(year,
-  // monthIndex, day). Note that months are ZERO-indexed: January
-  // is 0, February is 1, so March is 2.
-  const expenseDate = new Date(2021, 2, 28);
-  const expenseTitle = 'Car Insurance';
-  const expenseAmount = 294.67;
-
+// --- Props: Receiving Data from the Parent ---
+//
+// In regular JavaScript, you make functions reusable by accepting
+// parameters. React components work the same way, but with one
+// important difference: regardless of how many attributes you set
+// on the component tag, the function always receives exactly ONE
+// parameter — an object conventionally named "props".
+//
+// React automatically collects ALL attributes set on the component
+// tag (in this case, title, amount, and date set in App.js) and
+// bundles them into this single props object as key-value pairs.
+// The KEYS match the attribute names you chose in the parent, and
+// the VALUES are whatever you passed.
+//
+// For example, if App.js has:
+//   <ExpenseItem title="Car Insurance" amount={294.67} />
+// then inside this function:
+//   props.title  → "Car Insurance"
+//   props.amount → 294.67
+//
+// The parameter name "props" is a convention, not a requirement.
+// You could name it "data" or "attributes" — but "props" is the
+// universally accepted name in the React community.
+//
+// With props, the component no longer stores its own data. It
+// becomes a reusable template: the SAME component function renders
+// different output depending on which props it receives. This is
+// one of the most fundamental concepts in React.
+//
+// The three hardcoded constants (expenseDate, expenseTitle,
+// expenseAmount) from the previous lesson are now gone — all data
+// flows in through props from the parent component.
+function ExpenseItem(props) {
   // --- Dynamic Values in JSX with Curly Braces ---
   //
   // Single curly braces { } inside JSX open a "dynamic expression"
-  // slot. Between them, you can place any valid JavaScript expression:
-  //   - A variable or constant name: {expenseTitle}
-  //   - An arithmetic expression: {1 + 1} → renders "2"
-  //   - A function call: {Math.random()} → renders a random number
-  //   - A method call: {expenseDate.toISOString()}
-  //
-  // React evaluates the expression and inserts the resulting value
-  // into the rendered output. Without curly braces, the text would
-  // be rendered literally (e.g., the string "expenseTitle" instead
-  // of the value stored in the constant).
+  // slot. Here we access properties on the props object to render
+  // the data passed in by the parent:
+  //   {props.title}  — the expense title string
+  //   {props.amount} — the expense amount number
+  //   {props.date.toISOString()} — the date converted to a string
   //
   // The Date object cannot be rendered directly as text — React
   // would throw an error. Calling .toISOString() converts it to a
-  // human-readable string. The output format is not ideal yet; a
-  // better date display will be implemented in a later lesson.
+  // readable string. The output format is not ideal yet; a better
+  // date display will be implemented in a later lesson.
   //
   // --- className Instead of class ---
   //
@@ -139,10 +145,10 @@ function ExpenseItem() {
   // class names organized and avoiding collisions.
   return (
     <div className="expense-item">
-      <div>{expenseDate.toISOString()}</div>
+      <div>{props.date.toISOString()}</div>
       <div className="expense-item__description">
-        <h2>{expenseTitle}</h2>
-        <div className="expense-item__price">${expenseAmount}</div>
+        <h2>{props.title}</h2>
+        <div className="expense-item__price">${props.amount}</div>
       </div>
     </div>
   );
