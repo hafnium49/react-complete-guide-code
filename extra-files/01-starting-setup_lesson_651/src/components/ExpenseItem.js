@@ -114,6 +114,32 @@ import './ExpenseItem.css';
 // The three hardcoded constants (expenseDate, expenseTitle,
 // expenseAmount) from the previous lesson are now gone — all data
 // flows in through props from the parent component.
+//
+// --- Alternative: Object Destructuring in the Parameter List ---
+//
+// Instead of accepting the entire props object and then accessing
+// its properties with dot notation (props.title, props.date, etc.),
+// you can use JavaScript's object destructuring syntax directly in
+// the function parameter list:
+//
+//   function ExpenseItem({ date, title, amount }) {
+//     // Now use "date", "title", "amount" directly — no "props." prefix
+//   }
+//
+// This pulls each named property out of the incoming props object
+// and makes it available as a standalone variable. The curly braces
+// here are NOT JSX or special React syntax — they are standard
+// ES6 destructuring assignment, the same syntax you would use with
+// any JavaScript function that receives an object parameter.
+//
+// Destructuring can make component code more concise because you
+// avoid repeating "props." everywhere. It also makes it explicit
+// at a glance which props the component expects. Many React
+// projects prefer this style, so you will encounter it frequently.
+//
+// Both approaches — dot notation on the props object and parameter
+// destructuring — are functionally identical. This course continues
+// with the dot notation style for now.
 function ExpenseItem(props) {
   // --- Dynamic Values in JSX with Curly Braces ---
   //

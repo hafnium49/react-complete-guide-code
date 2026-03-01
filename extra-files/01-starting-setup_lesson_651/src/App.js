@@ -130,6 +130,27 @@ function App() {
   // time based on the props it receives — same code, different
   // output. This is analogous to calling a function multiple times
   // with different arguments.
+  //
+  // --- Alternative: Passing a Single Object Prop ---
+  //
+  // Instead of setting three separate attributes (title, amount,
+  // date) on each ExpenseItem, you could pass the entire expense
+  // object as a single prop:
+  //
+  //   <ExpenseItem expense={expenses[0]} />
+  //
+  // The child component would then access nested properties like
+  // props.expense.title, props.expense.date, etc. This pattern is
+  // common when a component needs most or all fields from a data
+  // object — it reduces the number of attributes you write in JSX
+  // and keeps the parent code more concise.
+  //
+  // The trade-off is readability: individual props make it
+  // immediately clear WHICH pieces of data the child expects,
+  // whereas a single object prop hides that detail behind one
+  // generic name. Both approaches are perfectly valid — the choice
+  // depends on your preference and the use case. For clarity while
+  // learning, this course continues with individual props.
   return (
     <div>
       <h2>Let's get started!</h2>
