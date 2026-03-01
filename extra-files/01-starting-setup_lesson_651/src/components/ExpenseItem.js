@@ -76,6 +76,12 @@
 // "./components/ExpenseItem" because App.js lives one level up.)
 import ExpenseDate from './ExpenseDate';
 
+// Card is a wrapper component that provides shared container styles
+// (rounded corners, drop shadow). By using <Card> instead of a plain
+// <div> as the outermost element, we get those styles automatically
+// without duplicating them in every component's CSS file.
+import Card from './Card';
+
 // --- Importing CSS for a Component ---
 //
 // To apply styles to a component, create a CSS file next to the
@@ -204,14 +210,28 @@ function ExpenseItem(props) {
   // Both are functionally identical. The self-closing form is more
   // concise and is the common convention in React when there are
   // no children to pass.
+  //
+  // --- Card as the Root Element ---
+  //
+  // The outermost element is now <Card> instead of a plain <div>.
+  // We pass "expense-item" as the className prop — Card appends it
+  // to its own "card" class, so the rendered div ends up with both
+  // "card" (shared styles) and "expense-item" (component-specific
+  // styles). The border-radius and box-shadow that were previously
+  // in ExpenseItem.css have been moved to Card.css to avoid
+  // duplication, since Expenses uses the same visual treatment.
+  //
+  // The ExpenseDate and description elements sit between the
+  // opening and closing <Card> tags, so they become the value of
+  // props.children inside Card. Card renders them inside its div.
   return (
-    <div className="expense-item">
+    <Card className="expense-item">
       <ExpenseDate date={props.date} />
       <div className="expense-item__description">
         <h2>{props.title}</h2>
         <div className="expense-item__price">${props.amount}</div>
       </div>
-    </div>
+    </Card>
   );
 }
 

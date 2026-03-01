@@ -56,15 +56,27 @@
 // --- Importing a Custom Component ---
 //
 // To use a component defined in another file, you must import it.
-// The path "./components/ExpenseItem" tells the build tool:
+// The path "./components/Expenses" tells the build tool:
 //   ./         → start in the same directory as this file (src/)
 //   components → enter the components subfolder
-//   /ExpenseItem → find ExpenseItem.js (the .js extension is omitted
-//                  by convention for JavaScript imports)
+//   /Expenses  → find Expenses.js (the .js extension is omitted
+//                by convention for JavaScript imports)
 //
-// The imported name (ExpenseItem) is then available as a custom JSX
-// tag. It must match exactly what you use in the JSX below.
-import ExpenseItem from './components/ExpenseItem';
+// Previously, App imported ExpenseItem directly and rendered four
+// instances with individual props. That logic has now been extracted
+// into a dedicated Expenses component. App only needs to pass the
+// entire array once — Expenses handles distributing data to each
+// ExpenseItem internally.
+//
+// This is another example of splitting components to keep each one
+// focused: App manages the raw data, Expenses manages the list
+// layout, ExpenseItem renders a single row, and ExpenseDate renders
+// the calendar badge. The component tree now looks like:
+//
+//   App → Expenses → ExpenseItem → ExpenseDate
+//                                → Card (wrapper)
+//                 → Card (wrapper)
+import Expenses from './components/Expenses';
 
 function App() {
   // --- Data Defined in the Parent Component ---
@@ -101,88 +113,21 @@ function App() {
     },
   ];
 
-  // --- Props: Passing Data to Child Components ---
+  // --- Passing the Entire Array as a Single Prop ---
   //
-  // Props (short for "properties") are React's mechanism for passing
-  // data from a PARENT component to a CHILD component. They work
-  // like HTML attributes: you add custom attributes to the component
-  // tag, and the child receives them as properties on an object.
+  // Instead of rendering four ExpenseItem components here and
+  // wiring up each one's props individually, we now delegate that
+  // to the Expenses component. We pass the entire expenses array
+  // as a single prop called "items." Expenses then distributes the
+  // individual fields (title, amount, date) to each ExpenseItem.
   //
-  // Here, each <ExpenseItem> receives three attributes:
-  //   title  — the expense title (a string)
-  //   amount — the expense amount (a number)
-  //   date   — the expense date (a Date object)
-  //
-  // The NAMES of these attributes are entirely your choice. They
-  // become the keys on the props object that the child component
-  // receives. Whatever name you choose here (e.g., "title") must
-  // match what you access in the child (e.g., props.title).
-  //
-  // The VALUES are set dynamically using curly braces to pull data
-  // from the expenses array. For example, {expenses[0].title}
-  // accesses the title property of the first object in the array.
-  //
-  // --- Reusing Components with Different Data ---
-  //
-  // This is the core power of props: we use the SAME component
-  // (ExpenseItem) four times, but each instance receives DIFFERENT
-  // data through its props. The component renders differently each
-  // time based on the props it receives — same code, different
-  // output. This is analogous to calling a function multiple times
-  // with different arguments.
-  //
-  // --- Alternative: Passing a Single Object Prop ---
-  //
-  // Instead of setting three separate attributes (title, amount,
-  // date) on each ExpenseItem, you could pass the entire expense
-  // object as a single prop:
-  //
-  //   <ExpenseItem expense={expenses[0]} />
-  //
-  // The child component would then access nested properties like
-  // props.expense.title, props.expense.date, etc. This pattern is
-  // common when a component needs most or all fields from a data
-  // object — it reduces the number of attributes you write in JSX
-  // and keeps the parent code more concise.
-  //
-  // The trade-off is readability: individual props make it
-  // immediately clear WHICH pieces of data the child expects,
-  // whereas a single object prop hides that detail behind one
-  // generic name. Both approaches are perfectly valid — the choice
-  // depends on your preference and the use case. For clarity while
-  // learning, this course continues with individual props.
-  //
-  // --- Self-Closing Component Tags ---
-  //
-  // When a component has no children (no content between the
-  // opening and closing tags), you can use a self-closing tag
-  // with a trailing slash instead of writing separate opening
-  // and closing tags. This is purely a style choice — both forms
-  // are functionally identical — but self-closing tags are the
-  // common convention for childless components in React projects.
+  // This keeps App.js clean — it only needs one line of JSX to
+  // render the whole expense list. The details of HOW items are
+  // laid out live inside Expenses, where they belong.
   return (
     <div>
       <h2>Let's get started!</h2>
-      <ExpenseItem
-        title={expenses[0].title}
-        amount={expenses[0].amount}
-        date={expenses[0].date}
-      />
-      <ExpenseItem
-        title={expenses[1].title}
-        amount={expenses[1].amount}
-        date={expenses[1].date}
-      />
-      <ExpenseItem
-        title={expenses[2].title}
-        amount={expenses[2].amount}
-        date={expenses[2].date}
-      />
-      <ExpenseItem
-        title={expenses[3].title}
-        amount={expenses[3].amount}
-        date={expenses[3].date}
-      />
+      <Expenses items={expenses} />
     </div>
   );
 }
