@@ -76,6 +76,20 @@
 //   App → Expenses → ExpenseItem → ExpenseDate
 //                                → Card (wrapper)
 //                 → Card (wrapper)
+//
+// --- What Actually Ends Up in the DOM ---
+//
+// If you inspect the page in the browser's developer tools (e.g.,
+// Chrome DevTools → Elements tab), you will NOT see any <Card>,
+// <ExpenseItem>, or <Expenses> elements. Only standard HTML
+// elements (div, h2, etc.) appear in the real DOM. Custom
+// components are a React-only abstraction: they exist in your
+// source code to organize logic and UI, but every component
+// ultimately resolves to built-in HTML elements. If you drill
+// deep enough into any custom component, you will always find
+// that it returns divs, spans, headings, or other native elements
+// at the leaf level. React takes care of translating your
+// component tree into actual DOM nodes.
 import Expenses from './components/Expenses';
 
 function App() {
@@ -91,6 +105,16 @@ function App() {
   // Each object represents one expense with an id, title, amount,
   // and date. The id field is not used yet but will be useful
   // later when rendering lists dynamically.
+  //
+  // --- This Application Is Still Static ---
+  //
+  // Notice that this array is defined once and never changes. There
+  // is no way for the user to add, remove, or edit an expense. The
+  // components are reusable and configurable through props, but the
+  // DATA driving them is fixed. To make this app truly interactive
+  // — so that user actions can change what is displayed — we need
+  // a concept called STATE, which is the focus of the next section.
+  // State lets a component re-render itself when its data changes.
   const expenses = [
     {
       id: 'e1',
@@ -144,3 +168,28 @@ function App() {
 // file and needed in another, it must be exported from the source
 // file and imported in the consuming file.
 export default App;
+
+// --- Section Recap: React Basics & Working with Components ---
+//
+// The three core concepts covered in this section are:
+//
+//   1. JSX — The HTML-like syntax that React components return.
+//      It is transformed into JavaScript function calls by the
+//      build tool before the browser ever sees it.
+//
+//   2. Components — Reusable building blocks (JavaScript functions)
+//      that return JSX. You combine them like custom HTML elements
+//      to compose the overall user interface. Each component should
+//      be small and focused on a single responsibility.
+//
+//   3. Props — The mechanism for passing data from a parent
+//      component to a child component. Props make components
+//      configurable and reusable: same code, different output.
+//
+// Additionally, we explored COMPOSITION — nesting components
+// inside one another, including wrapper components that use
+// props.children to act as generic shells around arbitrary content.
+//
+// Next up: JSX under the hood, file organization alternatives,
+// and function syntax options — followed by the STATE concept
+// that will make this application interactive.
