@@ -66,13 +66,43 @@
 // insertion could treat the return as "return undefined;" before
 // it ever sees the JSX on the next line.
 
+// --- Importing CSS for a Component ---
+//
+// To apply styles to a component, create a CSS file next to the
+// component's JS file (same folder, matching name). Then import it
+// with a bare import statement — no named import is needed because
+// we are not importing a JavaScript value. The import simply tells
+// the build process to include this CSS file in the final bundle
+// and inject its styles into the page. Without this import, the
+// build tool would not know the CSS file exists and the styles
+// would not be applied.
+//
+// Convention: place the CSS file next to its component file with
+// the same base name (ExpenseItem.js ↔ ExpenseItem.css). This
+// keeps related files together and makes them easy to find.
+import './ExpenseItem.css';
+
 function ExpenseItem() {
+  // --- className Instead of class ---
+  //
+  // In standard HTML, you assign CSS classes with the "class"
+  // attribute. In JSX, you must use "className" instead. This is
+  // because JSX is ultimately JavaScript, and "class" is a reserved
+  // keyword in JavaScript (used for defining ES6 classes). Using
+  // "class" in JSX technically still works but will produce a
+  // warning — always use "className" for correctness.
+  //
+  // The class names used here (expense-item, expense-item__description,
+  // expense-item__price) match the selectors defined in the imported
+  // ExpenseItem.css file. They follow the BEM naming convention
+  // (Block__Element) which is a popular CSS methodology for keeping
+  // class names organized and avoiding collisions.
   return (
-    <div>
+    <div className="expense-item">
       <div>March 28th 2021</div>
-      <div>
+      <div className="expense-item__description">
         <h2>Car Insurance</h2>
-        <div>$249.67</div>
+        <div className="expense-item__price">$249.67</div>
       </div>
     </div>
   );
