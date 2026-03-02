@@ -108,9 +108,10 @@ import React from 'react';
 // --- Importing a Custom Component ---
 //
 // To use a component defined in another file, you must import it.
-// The path "./components/Expenses" tells the build tool:
+// The path "./components/Expenses/Expenses" tells the build tool:
 //   ./         → start in the same directory as this file (src/)
 //   components → enter the components subfolder
+//   /Expenses  → enter the Expenses subfolder
 //   /Expenses  → find Expenses.js (the .js extension is omitted
 //                by convention for JavaScript imports)
 //
@@ -142,7 +143,30 @@ import React from 'react';
 // that it returns divs, spans, headings, or other native elements
 // at the leaf level. React takes care of translating your
 // component tree into actual DOM nodes.
-import Expenses from './components/Expenses';
+//
+// --- Organizing Files into Subfolders ---
+//
+// As a project grows, a single flat "components" folder becomes
+// hard to navigate. A common practice is to group related files
+// into subfolders:
+//
+//   components/
+//     Expenses/   — feature-specific components (Expenses,
+//                   ExpenseItem, ExpenseDate + their CSS)
+//     UI/         — general-purpose UI components (Card + its CSS)
+//
+// Feature folders group components that belong to the same domain
+// (e.g., "expenses"). A UI/ folder holds generic, reusable
+// building blocks that are not tied to any specific feature. This
+// structure is just a convention — there is no required layout.
+// Choose whatever organization makes sense for you and your team.
+//
+// When files move to subfolders, import paths must be updated to
+// reflect the new locations. Imports between files in the SAME
+// subfolder still use "./" while cross-folder imports use "../"
+// to navigate up one level before descending into the sibling
+// folder.
+import Expenses from './components/Expenses/Expenses';
 
 function App() {
   // --- Data Defined in the Parent Component ---

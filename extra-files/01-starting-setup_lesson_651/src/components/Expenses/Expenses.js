@@ -34,7 +34,14 @@ import React from 'react';
 // (title, amount, date) to each ExpenseItem. The data flows
 // downward: App → Expenses → ExpenseItem → ExpenseDate.
 import ExpenseItem from './ExpenseItem';
-import Card from './Card';
+// --- Relative Import After Reorganization ---
+//
+// Card.js now lives in a sibling folder (../UI/). The ".." means
+// "go up one level" — out of the Expenses/ folder into components/
+// — and then "/UI/Card" descends into the UI/ folder. The other
+// imports (ExpenseItem, ExpenseDate, Expenses.css) still use "./"
+// because they remain in the same Expenses/ folder as this file.
+import Card from '../UI/Card';
 import './Expenses.css';
 
 function Expenses(props) {

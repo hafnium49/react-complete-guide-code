@@ -82,7 +82,12 @@ import ExpenseDate from './ExpenseDate';
 // (rounded corners, drop shadow). By using <Card> instead of a plain
 // <div> as the outermost element, we get those styles automatically
 // without duplicating them in every component's CSS file.
-import Card from './Card';
+//
+// After file reorganization, Card lives in a sibling folder (../UI/).
+// The ".." navigates up from Expenses/ to components/, then "/UI/Card"
+// descends into the UI/ subfolder. ExpenseDate and ExpenseItem.css
+// still use "./" because they are in the same Expenses/ directory.
+import Card from '../UI/Card';
 
 // --- Importing CSS for a Component ---
 //
