@@ -168,7 +168,33 @@ import React from 'react';
 // folder.
 import Expenses from './components/Expenses/Expenses';
 
-function App() {
+// --- Arrow Function Syntax for Components ---
+//
+// Instead of using the function keyword to define a component:
+//
+//   function App() { ... }
+//
+// you can use an arrow function stored in a const:
+//
+//   const App = () => { ... }
+//
+// This is standard ES6 JavaScript, not a React-specific feature.
+// The syntax replaces the "function" keyword with "const", assigns
+// the function to a named constant, and uses the "=>" (fat arrow)
+// between the parameter list and the function body.
+//
+// For React components, the two forms are functionally identical.
+// There is no practical difference — the choice is purely a matter
+// of personal style. Arrow functions are slightly more concise and
+// are widely used in React codebases, so you will encounter them
+// frequently. This course adopts arrow functions going forward.
+//
+// Arrow functions also have a key difference from regular functions
+// regarding the "this" keyword (they inherit "this" from the
+// surrounding scope instead of having their own), but this does
+// not matter for React component functions because React components
+// never rely on "this" the way class methods do.
+const App = () => {
   // --- Data Defined in the Parent Component ---
   //
   // The expense data lives here in App — the parent component —
@@ -283,6 +309,10 @@ export default App;
 // inside one another, including wrapper components that use
 // props.children to act as generic shells around arbitrary content.
 //
-// Next up: JSX under the hood, file organization alternatives,
-// and function syntax options — followed by the STATE concept
-// that will make this application interactive.
+// We also covered JSX under the hood (React.createElement),
+// file organization into feature and UI subfolders, and the
+// arrow function syntax alternative for component definitions.
+//
+// Next up: a practice project to reinforce these fundamentals,
+// followed by the STATE concept that will make this application
+// truly interactive.

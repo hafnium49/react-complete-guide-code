@@ -59,7 +59,7 @@ import React from 'react';
 // component-specific styles the parent needs.
 import './Card.css';
 
-function Card(props) {
+const Card = (props) => {
   const classes = 'card ' + props.className;
 
   return <div className={classes}>{props.children}</div>;

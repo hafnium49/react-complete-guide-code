@@ -163,7 +163,7 @@ import './ExpenseItem.css';
 // Both approaches — dot notation on the props object and parameter
 // destructuring — are functionally identical. This course continues
 // with the dot notation style for now.
-function ExpenseItem(props) {
+const ExpenseItem = (props) => {
   // --- Dynamic Values in JSX with Curly Braces ---
   //
   // Single curly braces { } inside JSX open a "dynamic expression"

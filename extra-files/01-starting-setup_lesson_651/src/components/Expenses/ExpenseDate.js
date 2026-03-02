@@ -45,7 +45,7 @@ import './ExpenseDate.css';
 // This component expects a single prop: "date" — a JavaScript
 // Date object. It extracts the month, year, and day from that
 // date and renders them in a small calendar-like layout.
-function ExpenseDate(props) {
+const ExpenseDate = (props) => {
   // --- Extracting Logic into Helper Constants (Revisited) ---
   //
   // These three constants were originally defined inside the
