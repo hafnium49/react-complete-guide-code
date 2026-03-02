@@ -38,6 +38,13 @@
 // specific rendering API. The import path is the package name (no ./
 // prefix), so the build tool looks in node_modules rather than in the
 // local src/ folder.
+// Although modern project setups no longer require this import,
+// we include it to make it explicit that React is the library
+// powering JSX and the component model used throughout this app.
+// See App.js for a detailed explanation of why this import existed
+// historically and why it is still commonly seen in codebases.
+import React from 'react';
+
 import ReactDOM from 'react-dom/client';
 
 // Importing a CSS file into a JS file tells the build tool to include

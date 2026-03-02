@@ -53,6 +53,58 @@
 // up the modification and updates the page in the browser without
 // a manual refresh. This tight feedback loop speeds up development.
 
+// --- JSX Under the Hood: React.createElement() ---
+//
+// JSX is syntactic sugar. The build tool transforms every piece of
+// JSX into calls to React.createElement(). For example, this JSX:
+//
+//   <div>
+//     <h2>Let's get started!</h2>
+//     <Expenses items={expenses} />
+//   </div>
+//
+// is equivalent to writing:
+//
+//   React.createElement(
+//     'div',
+//     {},
+//     React.createElement('h2', {}, "Let's get started!"),
+//     React.createElement(Expenses, { items: expenses })
+//   );
+//
+// React.createElement() takes three (or more) arguments:
+//   1. The element type — a STRING for built-in HTML elements
+//      (like 'div', 'h2') or a REFERENCE to a component function
+//      (like Expenses) for custom components.
+//   2. An object of attributes/props — pass {} if there are none.
+//   3+ The children — any number of additional arguments representing
+//      the content between the opening and closing tags.
+//
+// This is also why the single-root-element rule exists: a function
+// can only return ONE value. With createElement, you always create
+// ONE root element that wraps all children. Trying to return two
+// sibling createElement calls would be returning two values.
+//
+// --- Why "import React" Exists ---
+//
+// In older React projects, every file that contained JSX needed:
+//
+//   import React from 'react';
+//
+// because the transformed code called React.createElement() directly
+// and without the import, "React" would be an undefined variable.
+// Modern project setups (like Create React App 4+) perform this
+// transformation differently, so the import is no longer required.
+// However, many codebases still include it — either out of habit
+// or to make the dependency on React explicit. We add it here in
+// every component file for that reason.
+//
+// Note: the 'react' and 'react-dom' packages listed in package.json
+// are the two main React dependencies. 'react' provides the core
+// library (createElement, hooks, etc.) and 'react-dom' provides the
+// browser-specific rendering (createRoot, render, etc.).
+import React from 'react';
+
 // --- Importing a Custom Component ---
 //
 // To use a component defined in another file, you must import it.
@@ -148,6 +200,23 @@ function App() {
   // This keeps App.js clean — it only needs one line of JSX to
   // render the whole expense list. The details of HOW items are
   // laid out live inside Expenses, where they belong.
+
+  // --- React.createElement Alternative (for reference only) ---
+  //
+  // The commented-out code below is functionally IDENTICAL to the
+  // JSX return statement that follows it. It demonstrates what the
+  // build tool produces when it transforms JSX. You could write
+  // an entire React application using only createElement calls —
+  // it would work perfectly — but JSX is far easier to read and
+  // maintain, which is why it is the standard in practice.
+  //
+  // return React.createElement(
+  //   'div',
+  //   {},
+  //   React.createElement('h2', {}, "Let's get started!"),
+  //   React.createElement(Expenses, { items: expenses })
+  // );
+
   return (
     <div>
       <h2>Let's get started!</h2>

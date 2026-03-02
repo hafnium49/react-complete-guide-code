@@ -1,3 +1,5 @@
+import React from 'react';
+
 // --- Card.js: A Reusable Wrapper Component (Composition) ---
 //
 // So far, every component we have built is "specific" — it renders

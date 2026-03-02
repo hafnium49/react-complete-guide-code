@@ -1,3 +1,5 @@
+import React from 'react';
+
 // --- ExpenseDate.js: Splitting Components ---
 //
 // As a React application grows, individual components tend to

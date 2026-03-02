@@ -1,3 +1,5 @@
+import React from 'react';
+
 // --- ExpenseItem.js: The First Custom Component ---
 //
 // This is the first component we create ourselves (App was provided

@@ -1,3 +1,5 @@
+import React from 'react';
+
 // --- Expenses.js: Grouping Related Items in a Container ---
 //
 // This component wraps all the individual ExpenseItem components
