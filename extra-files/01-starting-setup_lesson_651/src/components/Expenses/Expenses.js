@@ -2,6 +2,26 @@ import React from 'react';
 
 // --- Expenses.js: Grouping Related Items in a Container ---
 //
+// *** Assignment 1: Time to Practice — React & Component Basics ***
+//
+// This file is the solution to the first practice assignment in
+// the course. The assignment asked you to:
+//
+//   1. Create a new component responsible for displaying expenses.
+//   2. Render multiple ExpenseItem components inside it.
+//   3. Keep the expenses data in App.js and pass it into this
+//      component via props.
+//   4. Apply the provided Expenses.css for container styling.
+//
+// All four requirements are satisfied by this Expenses component.
+// The assignment falls between Lessons 662 (splitting components)
+// and 663 (composition / Card wrapper). In our codebase, we went
+// further by also wrapping Expenses in a Card component and
+// reorganizing files into subfolders — enhancements covered in
+// the lessons that followed. The core idea, however, is exactly
+// what the assignment asked for: move the expense list out of App
+// and into its own dedicated component.
+//
 // This component wraps all the individual ExpenseItem components
 // into a single visual group. Previously, the four <ExpenseItem>
 // elements lived directly inside App.js. Extracting them into a
