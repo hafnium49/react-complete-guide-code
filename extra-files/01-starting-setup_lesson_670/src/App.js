@@ -2,9 +2,10 @@ import componentsImage from './assets/images/components.png';
 import stateImage from './assets/images/state.png';
 import eventsImage from './assets/images/events.png';
 import Header from './components/Header/Header';
+import Concept from './components/Concept/Concept';
 
-// The concept data still lives in App because only the header is extracted in this step.
-// Each object contains the values needed to fill one concept card.
+// App still owns the shared concept data.
+// The reusable child component only needs to know how one item should be displayed.
 const concepts = [
   {
     title: 'Components',
@@ -32,32 +33,24 @@ function App() {
       {/* Custom components use uppercase names so React can distinguish them from built-in HTML elements. */}
       <Header />
       <ul id="concepts">
-        {/*
-          The concept cards stay inline for now.
-          Extracting only one section at a time keeps the refactor easy to follow.
-        */}
-        {/*
-          These list items still share the same structure, which will matter in the next refactoring step.
-        */}
-        <li className="concept">
-          {/* Array indexing selects one concept object, and dot notation reads a field from that object. */}
-          <img src={concepts[0].image} alt={concepts[0].title} />
-          {/* One data object can feed multiple pieces of JSX without duplicating the data itself. */}
-          <h2>{concepts[0].title}</h2>
-          <p>{concepts[0].description}</p>
-        </li>
-        <li className="concept">
-          {/* Repeating the same JSX shape three times is useful as a learning step, even though it is not the final design. */}
-          <img src={concepts[1].image} alt={concepts[1].title} />
-          <h2>{concepts[1].title}</h2>
-          <p>{concepts[1].description}</p>
-        </li>
-        <li className="concept">
-          {/* This third card makes the remaining repetition easy to spot before introducing another component. */}
-          <img src={concepts[2].image} alt={concepts[2].title} />
-          <h2>{concepts[2].title}</h2>
-          <p>{concepts[2].description}</p>
-        </li>
+        {/* The same component can be reused as long as each usage receives the values it needs via props. */}
+        <Concept
+          image={concepts[0].image}
+          title={concepts[0].title}
+          description={concepts[0].description}
+        />
+        {/* Passing a different array element changes the content without changing the component markup. */}
+        <Concept
+          image={concepts[1].image}
+          title={concepts[1].title}
+          description={concepts[1].description}
+        />
+        {/* Reusing one component three times avoids redefining the card structure in multiple places. */}
+        <Concept
+          image={concepts[2].image}
+          title={concepts[2].title}
+          description={concepts[2].description}
+        />
       </ul>
     </div>
   );
