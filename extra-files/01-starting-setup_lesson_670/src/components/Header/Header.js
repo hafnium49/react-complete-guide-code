@@ -3,6 +3,7 @@ import keyConceptsImage from '../../assets/images/key-concepts.png';
 function Header() {
   return (
     <header>
+      {/* This component has no props because its content does not vary in this exercise. */}
       {/* The image stays close to the header because it belongs only to this section. */}
       <img src={keyConceptsImage} alt="Medal badge with a star" />
       <h1>Key React Concepts</h1>

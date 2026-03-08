@@ -33,6 +33,10 @@ function App() {
       {/* The header was moved into its own component because it represents a distinct page section. */}
       <Header />
       <ul id="concepts">
+        {/*
+          Each card reads from one array element.
+          The bracket syntax selects an object from concepts, and dot notation reads a specific field from that object.
+        */}
         {/* Each Concept receives only the values it needs to render one list item. */}
         <Concept
           image={concepts[0].image}
