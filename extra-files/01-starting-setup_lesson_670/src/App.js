@@ -30,6 +30,7 @@ const concepts = [
 function App() {
   return (
     <div>
+      {/* The header is already a self-contained page section, so it would be a reasonable component candidate. */}
       <header>
         <img src={keyConceptsImage} alt="Medal badge with a star" />
         <h1>Key React Concepts</h1>
@@ -40,21 +41,26 @@ function App() {
           Curly braces let JSX switch into regular JavaScript.
           That makes it possible to read values from the concepts array instead of pasting static text.
         */}
+        {/*
+          These list items share the same structure, which is a strong hint that one reusable component could render them.
+          Repetition like this also makes later UI changes harder to maintain because the same edit must be repeated manually.
+        */}
         <li className="concept">
           {/* [0] selects the first object in the array, then .image reads one property from that object. */}
           <img src={concepts[0].image} alt={concepts[0].title} />
           {/* The same object can supply multiple fields for different parts of the markup. */}
           <h2>{concepts[0].title}</h2>
+          {/* If this paragraph ever changed shape or disappeared, the same update would be needed in every card. */}
           <p>{concepts[0].description}</p>
         </li>
         <li className="concept">
-          {/* Repeating the markup is acceptable here because this lesson only focuses on dynamic output. */}
+          {/* The second item confirms that the repeated JSX is not just a one-off coincidence. */}
           <img src={concepts[1].image} alt={concepts[1].title} />
           <h2>{concepts[1].title}</h2>
           <p>{concepts[1].description}</p>
         </li>
         <li className="concept">
-          {/* The repeated structure will become a useful signal for the next refactoring step. */}
+          {/* By the third copy, the maintenance cost of leaving this inline becomes much easier to notice. */}
           <img src={concepts[2].image} alt={concepts[2].title} />
           <h2>{concepts[2].title}</h2>
           <p>{concepts[2].description}</p>
