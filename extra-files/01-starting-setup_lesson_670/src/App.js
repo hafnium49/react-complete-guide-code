@@ -1,11 +1,11 @@
+import keyConceptsImage from './assets/images/key-concepts.png';
 import componentsImage from './assets/images/components.png';
 import stateImage from './assets/images/state.png';
 import eventsImage from './assets/images/events.png';
-import Header from './components/Header/Header';
-import Concept from './components/Concept/Concept';
 
-// Each object stores the values needed to render one concept card.
-// Keeping the content in plain data makes it easy to forward pieces of that data as props.
+// Image files can be imported and then used as values inside JSX.
+// This keeps the asset paths under the control of the build setup.
+// The array below is the single source of truth for the concept content.
 const concepts = [
   {
     title: 'Components',
@@ -30,29 +30,35 @@ const concepts = [
 function App() {
   return (
     <div>
-      {/* The header was moved into its own component because it represents a distinct page section. */}
-      <Header />
+      <header>
+        <img src={keyConceptsImage} alt="Medal badge with a star" />
+        <h1>Key React Concepts</h1>
+        <p>Selected key React concepts you should know about</p>
+      </header>
       <ul id="concepts">
         {/*
-          Each card reads from one array element.
-          The bracket syntax selects an object from concepts, and dot notation reads a specific field from that object.
+          Curly braces let JSX switch into regular JavaScript.
+          That makes it possible to read values from the concepts array instead of pasting static text.
         */}
-        {/* Each Concept receives only the values it needs to render one list item. */}
-        <Concept
-          image={concepts[0].image}
-          title={concepts[0].title}
-          description={concepts[0].description}
-        />
-        <Concept
-          image={concepts[1].image}
-          title={concepts[1].title}
-          description={concepts[1].description}
-        />
-        <Concept
-          image={concepts[2].image}
-          title={concepts[2].title}
-          description={concepts[2].description}
-        />
+        <li className="concept">
+          {/* [0] selects the first object in the array, then .image reads one property from that object. */}
+          <img src={concepts[0].image} alt={concepts[0].title} />
+          {/* The same object can supply multiple fields for different parts of the markup. */}
+          <h2>{concepts[0].title}</h2>
+          <p>{concepts[0].description}</p>
+        </li>
+        <li className="concept">
+          {/* Repeating the markup is acceptable here because this lesson only focuses on dynamic output. */}
+          <img src={concepts[1].image} alt={concepts[1].title} />
+          <h2>{concepts[1].title}</h2>
+          <p>{concepts[1].description}</p>
+        </li>
+        <li className="concept">
+          {/* The repeated structure will become a useful signal for the next refactoring step. */}
+          <img src={concepts[2].image} alt={concepts[2].title} />
+          <h2>{concepts[2].title}</h2>
+          <p>{concepts[2].description}</p>
+        </li>
       </ul>
     </div>
   );
