@@ -1,11 +1,10 @@
-import keyConceptsImage from './assets/images/key-concepts.png';
 import componentsImage from './assets/images/components.png';
 import stateImage from './assets/images/state.png';
 import eventsImage from './assets/images/events.png';
+import Header from './components/Header/Header';
 
-// Image files can be imported and then used as values inside JSX.
-// This keeps the asset paths under the control of the build setup.
-// The array below is the single source of truth for the concept content.
+// The concept data still lives in App because only the header is extracted in this step.
+// Each object contains the values needed to fill one concept card.
 const concepts = [
   {
     title: 'Components',
@@ -30,37 +29,31 @@ const concepts = [
 function App() {
   return (
     <div>
-      {/* The header is already a self-contained page section, so it would be a reasonable component candidate. */}
-      <header>
-        <img src={keyConceptsImage} alt="Medal badge with a star" />
-        <h1>Key React Concepts</h1>
-        <p>Selected key React concepts you should know about</p>
-      </header>
+      {/* Custom components use uppercase names so React can distinguish them from built-in HTML elements. */}
+      <Header />
       <ul id="concepts">
         {/*
-          Curly braces let JSX switch into regular JavaScript.
-          That makes it possible to read values from the concepts array instead of pasting static text.
+          The concept cards stay inline for now.
+          Extracting only one section at a time keeps the refactor easy to follow.
         */}
         {/*
-          These list items share the same structure, which is a strong hint that one reusable component could render them.
-          Repetition like this also makes later UI changes harder to maintain because the same edit must be repeated manually.
+          These list items still share the same structure, which will matter in the next refactoring step.
         */}
         <li className="concept">
-          {/* [0] selects the first object in the array, then .image reads one property from that object. */}
+          {/* Array indexing selects one concept object, and dot notation reads a field from that object. */}
           <img src={concepts[0].image} alt={concepts[0].title} />
-          {/* The same object can supply multiple fields for different parts of the markup. */}
+          {/* One data object can feed multiple pieces of JSX without duplicating the data itself. */}
           <h2>{concepts[0].title}</h2>
-          {/* If this paragraph ever changed shape or disappeared, the same update would be needed in every card. */}
           <p>{concepts[0].description}</p>
         </li>
         <li className="concept">
-          {/* The second item confirms that the repeated JSX is not just a one-off coincidence. */}
+          {/* Repeating the same JSX shape three times is useful as a learning step, even though it is not the final design. */}
           <img src={concepts[1].image} alt={concepts[1].title} />
           <h2>{concepts[1].title}</h2>
           <p>{concepts[1].description}</p>
         </li>
         <li className="concept">
-          {/* By the third copy, the maintenance cost of leaving this inline becomes much easier to notice. */}
+          {/* This third card makes the remaining repetition easy to spot before introducing another component. */}
           <img src={concepts[2].image} alt={concepts[2].title} />
           <h2>{concepts[2].title}</h2>
           <p>{concepts[2].description}</p>
