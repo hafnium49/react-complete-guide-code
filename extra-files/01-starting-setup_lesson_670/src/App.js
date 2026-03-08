@@ -1,15 +1,12 @@
-import keyConceptsImage from './assets/images/key-concepts.png';
 import componentsImage from './assets/images/components.png';
 import stateImage from './assets/images/state.png';
 import eventsImage from './assets/images/events.png';
+import Header from './components/Header/Header';
+import Concept from './components/Concept/Concept';
 
-// Asset files can be imported into React components just like JavaScript modules.
-// Image imports become URL strings after the build step.
-// Keeping images as imports avoids hard-coded public paths.
-
-// Storing the content in data objects separates what to show from how to render it.
+// Each object stores the values needed to render one concept card.
+// Keeping the content in plain data makes it easy to forward pieces of that data as props.
 const concepts = [
-  // All entries share the same shape so one reusable component can render each item later.
   {
     title: 'Components',
     image: componentsImage,
@@ -30,32 +27,28 @@ const concepts = [
   },
 ];
 
-// App is the only custom component in the starter project.
-// The file intentionally keeps major UI regions inline so component boundaries are easier to spot.
-// The next refactor step is to extract smaller custom components.
 function App() {
   return (
     <div>
-      {/* The header already behaves like a self-contained UI block. */}
-      <header>
-        <img src={keyConceptsImage} alt="Medal badge with a star" />
-        <h1>Key React Concepts</h1>
-        <p>Selected key React concepts you should know about</p>
-      </header>
-
-      {/* This section should render the entries from the concepts array above. */}
+      {/* The header was moved into its own component because it represents a distinct page section. */}
+      <Header />
       <ul id="concepts">
-        {/*
-          This placeholder represents one concept card.
-          The first step is to replace the TODO values with real data from the concepts array.
-          After that, the repeated structure is a strong hint that a separate component would help.
-        */}
-        <li className="concept">
-          {/* These placeholders mark the values that should eventually be supplied dynamically. */}
-          <img src="TODO: IMAGE" alt="TODO: TITLE" />
-          <h2>TODO: TITLE</h2>
-          <p>TODO: DESCRIPTION</p>
-        </li>
+        {/* Each Concept receives only the values it needs to render one list item. */}
+        <Concept
+          image={concepts[0].image}
+          title={concepts[0].title}
+          description={concepts[0].description}
+        />
+        <Concept
+          image={concepts[1].image}
+          title={concepts[1].title}
+          description={concepts[1].description}
+        />
+        <Concept
+          image={concepts[2].image}
+          title={concepts[2].title}
+          description={concepts[2].description}
+        />
       </ul>
     </div>
   );
