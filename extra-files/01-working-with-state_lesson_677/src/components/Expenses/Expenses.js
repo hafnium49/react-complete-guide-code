@@ -12,6 +12,8 @@ const Expenses = (props) => {
   // stay centered on props and composition before list rendering is introduced.
   // Each <ExpenseItem /> in this JSX tells React to evaluate another component
   // function while it walks down the tree.
+  // The title state belongs to each ExpenseItem instance, so the state logic is
+  // placed in the child component instead of in this list component.
   // Because each rendered ExpenseItem is its own component instance, each one
   // can react to its own button clicks without affecting the others directly.
   return (
