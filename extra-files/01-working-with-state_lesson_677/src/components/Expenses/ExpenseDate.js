@@ -3,6 +3,8 @@ import React from 'react';
 import './ExpenseDate.css';
 
 const ExpenseDate = (props) => {
+  // Formatting happens inside this component so parent components can pass a
+  // Date object without also handling presentation details.
   const month = props.date.toLocaleString('en-US', { month: 'long' });
   const day = props.date.toLocaleString('en-US', { day: '2-digit' });
   const year = props.date.getFullYear();

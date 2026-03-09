@@ -5,6 +5,13 @@ import Card from '../UI/Card';
 import './Expenses.css';
 
 const Expenses = (props) => {
+  // Card provides a shared visual wrapper so this component can focus on
+  // describing which ExpenseItem components should appear inside it.
+
+  // The expenses are written out one by one here on purpose so the lesson can
+  // stay centered on props and composition before list rendering is introduced.
+  // Because each rendered ExpenseItem is its own component instance, each one
+  // can react to its own button clicks without affecting the others directly.
   return (
     <Card className="expenses">
       <ExpenseItem

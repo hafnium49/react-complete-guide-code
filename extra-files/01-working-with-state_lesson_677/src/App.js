@@ -3,6 +3,8 @@ import React from 'react';
 import Expenses from './components/Expenses/Expenses';
 
 const App = () => {
+  // Keeping the data in the top-level component makes it easy to pass the same
+  // source of truth down into child components through props.
   const expenses = [
     {
       id: 'e1',
@@ -25,13 +27,8 @@ const App = () => {
     },
   ];
 
-  // return React.createElement(
-  //   'div',
-  //   {},
-  //   React.createElement('h2', {}, "Let's get started!"),
-  //   React.createElement(Expenses, { items: expenses })
-  // );
-
+  // App itself is still stateless here. It prepares data and delegates the
+  // actual rendering work to a more specialized child component.
   return (
     <div>
       <h2>Let's get started!</h2>
