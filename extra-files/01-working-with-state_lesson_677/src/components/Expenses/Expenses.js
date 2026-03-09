@@ -10,6 +10,8 @@ const Expenses = (props) => {
 
   // The expenses are written out one by one here on purpose so the lesson can
   // stay centered on props and composition before list rendering is introduced.
+  // Each <ExpenseItem /> in this JSX tells React to evaluate another component
+  // function while it walks down the tree.
   // Because each rendered ExpenseItem is its own component instance, each one
   // can react to its own button clicks without affecting the others directly.
   return (

@@ -5,17 +5,21 @@ import Card from '../UI/Card';
 import './ExpenseItem.css';
 
 const ExpenseItem = (props) => {
-  // This local state starts with the incoming title, but after that it belongs
-  // to this specific ExpenseItem instance and can change independently.
+  // A normal local variable could hold a different title for a moment, but that
+  // alone would not tell React to render this component again.
+  // useState stores a value that React tracks across renders and gives us an
+  // updater function that can request a fresh render with new data.
   const [title, setTitle] = useState(props.title);
 
+  // ExpenseItem is just a function. React runs it during rendering and uses the
+  // returned JSX to decide what should appear on the screen.
   // Leaving this log in place helps show that a state update causes React to
   // run the component function again to produce the next UI snapshot.
   console.log('ExpenseItem evaluated by React');
 
   const clickHandler = () => {
-    // Calling the state updater tells React that this component should be
-    // rendered again with a new title value.
+    // Calling the state updater does more than change a value in memory.
+    // It also lets React know that this component needs another render pass.
     setTitle('Updated!');
 
     // Reading title immediately after setTitle still shows the value from the

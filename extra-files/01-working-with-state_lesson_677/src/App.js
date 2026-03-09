@@ -27,8 +27,11 @@ const App = () => {
     },
   ];
 
-  // App itself is still stateless here. It prepares data and delegates the
-  // actual rendering work to a more specialized child component.
+  // App itself is still stateless here. It prepares data and hands control to
+  // the next component in the tree.
+  // Returning <Expenses /> does not mean App calls that function directly.
+  // Instead, React sees the component in the JSX and invokes it while building
+  // the overall UI description.
   return (
     <div>
       <h2>Let's get started!</h2>
