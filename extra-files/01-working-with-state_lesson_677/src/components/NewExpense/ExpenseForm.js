@@ -50,6 +50,12 @@ const ExpenseForm = () => {
     // Logging here is a temporary checkpoint so we can confirm the form data is
     // assembled correctly before passing it to other components later.
     console.log(expenseData);
+
+    // Because the inputs read their displayed value from state, resetting the
+    // state back to empty strings also clears the visible form fields.
+    setEnteredTitle('');
+    setEnteredAmount('');
+    setEnteredDate('');
   };
 
   // The control wrapper groups related inputs so the layout CSS can arrange them
@@ -65,28 +71,36 @@ const ExpenseForm = () => {
               prop can be used across different input types in later steps.
               Passing titleChangeHandler directly lets React provide the event
               object automatically. A wrapper arrow function would only be needed
-              if we wanted to pass extra custom arguments as well. */}
-          <input type='text' onChange={titleChangeHandler} />
+              if we wanted to pass extra custom arguments as well.
+              value={enteredTitle} closes the loop by feeding the current state
+              back into the input, which makes this a controlled field. */}
+          <input type='text' value={enteredTitle} onChange={titleChangeHandler} />
         </div>
         <div className='new-expense__control'>
           <label>Amount</label>
           {/* number, min, and step let the browser guide the user toward valid
-              currency-like input before any custom validation exists. */}
+              currency-like input before any custom validation exists.
+              The value prop lets React overwrite the displayed content later,
+              for example right after a successful submit. */}
           <input
             type='number'
             min='0.01'
             step='0.01'
+            value={enteredAmount}
             onChange={amountChangeHandler}
           />
         </div>
         <div className='new-expense__control'>
           <label>Date</label>
           {/* date gives us the native date picker, while min and max limit the
-              allowed range to the years used elsewhere in this demo app. */}
+              allowed range to the years used elsewhere in this demo app.
+              Binding enteredDate here means the chosen date is controlled by
+              component state instead of only living inside the DOM element. */}
           <input
             type='date'
             min='2019-01-01'
             max='2022-12-31'
+            value={enteredDate}
             onChange={dateChangeHandler}
           />
         </div>
