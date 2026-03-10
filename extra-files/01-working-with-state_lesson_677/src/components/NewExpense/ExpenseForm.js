@@ -3,42 +3,30 @@ import React, { useState } from 'react';
 import './ExpenseForm.css';
 
 const ExpenseForm = () => {
-  // This version groups the related form fields into one state object instead
-  // of keeping three independent state slices.
-  // Empty strings are a sensible starting point because all three inputs begin
-  // without any user-provided value.
-  const [userInput, setUserInput] = useState({
-    enteredTitle: '',
-    enteredAmount: '',
-    enteredDate: '',
-  });
+  // This version returns to one state slice per field.
+  // That keeps each update small and direct because changing the title does not
+  // require rebuilding an object that also holds amount and date.
+  const [enteredTitle, setEnteredTitle] = useState('');
+  const [enteredAmount, setEnteredAmount] = useState('');
+  const [enteredDate, setEnteredDate] = useState('');
 
-  // With object state, React replaces the old object with the new one.
-  // That means every update must preserve the fields that should survive.
+  // A single object state is still a valid alternative for related fields.
+  // If that object-style update ever depends on the previous snapshot, the safer
+  // pattern is the functional updater form: setState((prevState) => ...).
 
   const titleChangeHandler = (event) => {
-    // Spreading userInput copies the existing fields into the next object
-    // before we override just the title entry.
-    setUserInput({
-      ...userInput,
-      enteredTitle: event.target.value,
-    });
+    // The title input produces a string value, so we can store it directly.
+    setEnteredTitle(event.target.value);
   };
 
   const amountChangeHandler = (event) => {
     // Input values arrive as strings, even for <input type="number">.
-    setUserInput({
-      ...userInput,
-      enteredAmount: event.target.value,
-    });
+    setEnteredAmount(event.target.value);
   };
 
   const dateChangeHandler = (event) => {
     // The browser also gives back the selected date as a string here.
-    setUserInput({
-      ...userInput,
-      enteredDate: event.target.value,
-    });
+    setEnteredDate(event.target.value);
   };
 
   // The control wrapper groups related inputs so the layout CSS can arrange them
