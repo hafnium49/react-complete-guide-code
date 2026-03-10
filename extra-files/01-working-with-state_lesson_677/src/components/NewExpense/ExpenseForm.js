@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 import './ExpenseForm.css';
 
-const ExpenseForm = () => {
+const ExpenseForm = (props) => {
   // This version returns to one state slice per field.
   // That keeps each update small and direct because changing the title does not
   // require rebuilding an object that also holds amount and date.
@@ -47,9 +47,10 @@ const ExpenseForm = () => {
       date: new Date(enteredDate),
     };
 
-    // Logging here is a temporary checkpoint so we can confirm the form data is
-    // assembled correctly before passing it to other components later.
-    console.log(expenseData);
+    // Instead of keeping the finished data inside this component, we hand it to
+    // the parent through the callback prop. The parent can then decide what
+    // "save" means for the rest of the app.
+    props.onSaveExpenseData(expenseData);
 
     // Because the inputs read their displayed value from state, resetting the
     // state back to empty strings also clears the visible form fields.

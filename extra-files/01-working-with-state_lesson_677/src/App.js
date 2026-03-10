@@ -28,12 +28,22 @@ const App = () => {
     },
   ];
 
+  // The new expense data ultimately matters here because App is the first
+  // component in this tree that also knows about the existing expenses list.
+  // The actual list update will come in a later section, so logging the received
+  // expense is enough for this lesson's checkpoint.
+  const addExpenseHandler = (expense) => {
+    console.log(expense);
+  };
+
   // App now combines two different concerns:
   // one branch gathers new expense data and the other branch shows existing
   // expenses. Keeping both here makes App the composition root for the page.
   return (
     <div>
-      <NewExpense />
+      {/* Passing a function down like a prop lets child components call back into
+          App later with newly created data. */}
+      <NewExpense onAddExpense={addExpenseHandler} />
       <Expenses items={expenses} />
     </div>
   );
