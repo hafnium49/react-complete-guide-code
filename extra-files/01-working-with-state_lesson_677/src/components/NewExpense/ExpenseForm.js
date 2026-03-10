@@ -13,6 +13,10 @@ const ExpenseForm = () => {
   // A single object state is still a valid alternative for related fields.
   // If that object-style update ever depends on the previous snapshot, the safer
   // pattern is the functional updater form: setState((prevState) => ...).
+  //
+  // Another valid alternative is one shared change handler that receives an
+  // identifier plus the changed value. This lesson stays with dedicated handler
+  // functions because they are straightforward to read while the form is small.
 
   const titleChangeHandler = (event) => {
     // The title input produces a string value, so we can store it directly.
@@ -37,7 +41,10 @@ const ExpenseForm = () => {
         <div className='new-expense__control'>
           <label>Title</label>
           {/* onChange is a convenient default for form fields because the same
-              prop can be used across different input types in later steps. */}
+              prop can be used across different input types in later steps.
+              Passing titleChangeHandler directly lets React provide the event
+              object automatically. A wrapper arrow function would only be needed
+              if we wanted to pass extra custom arguments as well. */}
           <input type='text' onChange={titleChangeHandler} />
         </div>
         <div className='new-expense__control'>
