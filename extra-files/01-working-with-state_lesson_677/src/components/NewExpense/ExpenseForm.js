@@ -3,8 +3,14 @@ import React from 'react';
 import './ExpenseForm.css';
 
 const ExpenseForm = () => {
-  // At this stage the form is only being structured.
-  // Event handlers and state for reading the entered values will be added later.
+  // At this stage the form is still mostly structural, but the title field now
+  // gets the first event listener so we can react to user input as it happens.
+  const titleChangeHandler = (event) => {
+    // React forwards the browser's event object to this handler.
+    // event.target points to the input that triggered the change, and value
+    // gives us the text that is currently inside that field.
+    console.log(event.target.value);
+  };
 
   // The control wrapper groups related inputs so the layout CSS can arrange them
   // as one responsive block instead of styling each field in isolation.
@@ -13,9 +19,9 @@ const ExpenseForm = () => {
       <div className='new-expense__controls'>
         <div className='new-expense__control'>
           <label>Title</label>
-          {/* A plain text input is enough here because the title has no special
-              browser-level formatting requirements. */}
-          <input type='text' />
+          {/* onChange is a convenient default for form fields because the same
+              prop can be used across different input types in later steps. */}
+          <input type='text' onChange={titleChangeHandler} />
         </div>
         <div className='new-expense__control'>
           <label>Amount</label>
