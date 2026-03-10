@@ -33,10 +33,31 @@ const ExpenseForm = () => {
     setEnteredDate(event.target.value);
   };
 
+  const submitHandler = (event) => {
+    // Forms try to submit a request by default. Preventing that keeps the page
+    // in place so React code can decide what should happen with the collected data.
+    event.preventDefault();
+
+    // The form state is combined into one object right before submission.
+    // Converting the date string into a Date object matches the data shape used
+    // by the existing expenses in this demo.
+    const expenseData = {
+      title: enteredTitle,
+      amount: enteredAmount,
+      date: new Date(enteredDate),
+    };
+
+    // Logging here is a temporary checkpoint so we can confirm the form data is
+    // assembled correctly before passing it to other components later.
+    console.log(expenseData);
+  };
+
   // The control wrapper groups related inputs so the layout CSS can arrange them
   // as one responsive block instead of styling each field in isolation.
   return (
-    <form>
+    // Listening on the form itself lets one submit event cover the whole form
+    // instead of wiring click behavior to a specific button.
+    <form onSubmit={submitHandler}>
       <div className='new-expense__controls'>
         <div className='new-expense__control'>
           <label>Title</label>
@@ -71,8 +92,8 @@ const ExpenseForm = () => {
         </div>
       </div>
       <div className='new-expense__actions'>
-        {/* submit makes the button participate in the form lifecycle, which will
-            matter once form submission handling is added. */}
+        {/* submit lets the button trigger the form's submit event so the handler
+            above can gather all field values in one place. */}
         <button type='submit'>Add Expense</button>
       </div>
     </form>
