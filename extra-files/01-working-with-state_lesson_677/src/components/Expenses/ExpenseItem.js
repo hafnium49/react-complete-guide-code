@@ -14,15 +14,22 @@ const ExpenseItem = (props) => {
   // alone would not tell React to render this component again.
   // useState stores a value that React tracks across renders and gives us an
   // updater function that can request a fresh render with new data.
-  // The argument is the starting value for this state on the first render.
+  // The argument is the starting value for this state on the first render of
+  // this particular ExpenseItem instance.
+  // On later renders, React ignores that initializer and gives back the latest
+  // stored state for this same instance instead.
   // The array destructuring syntax pulls out the current value first and the
   // updater function second.
+  // Using const is correct here because we never replace these bindings with
+  // the assignment operator. React updates its own stored value, and this line
+  // simply reads the newest snapshot during the next render.
   const [title, setTitle] = useState(props.title);
 
   // ExpenseItem is just a function. React runs it during rendering and uses the
   // returned JSX to decide what should appear on the screen.
   // Leaving this log in place helps show that a state update causes React to
-  // run the component function again to produce the next UI snapshot.
+  // run only the affected component instance again to produce the next UI
+  // snapshot.
   console.log('ExpenseItem evaluated by React');
 
   const clickHandler = () => {

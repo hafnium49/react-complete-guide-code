@@ -12,6 +12,8 @@ const Expenses = (props) => {
   // stay centered on props and composition before list rendering is introduced.
   // Each <ExpenseItem /> in this JSX tells React to evaluate another component
   // function while it walks down the tree.
+  // Reusing the same component definition four times does not create one shared
+  // state bucket. React creates four separate component instances here.
   // The title state belongs to each ExpenseItem instance, so the state logic is
   // placed in the child component instead of in this list component.
   // Because each rendered ExpenseItem is its own component instance, each one
