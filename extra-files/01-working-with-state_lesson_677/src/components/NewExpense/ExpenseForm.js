@@ -1,15 +1,32 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import './ExpenseForm.css';
 
 const ExpenseForm = () => {
-  // At this stage the form is still mostly structural, but the title field now
-  // gets the first event listener so we can react to user input as it happens.
+  // Each field gets its own piece of state so the entered values can survive
+  // rerenders and still be available later when the whole form is submitted.
+  // Empty strings are a sensible starting point because all three inputs begin
+  // without any user-provided value.
+  const [enteredTitle, setEnteredTitle] = useState('');
+  const [enteredAmount, setEnteredAmount] = useState('');
+  const [enteredDate, setEnteredDate] = useState('');
+
+  // Calling useState multiple times in one component is completely normal.
+  // React keeps these state values separate even though they live side by side.
+
   const titleChangeHandler = (event) => {
-    // React forwards the browser's event object to this handler.
-    // event.target points to the input that triggered the change, and value
-    // gives us the text that is currently inside that field.
-    console.log(event.target.value);
+    // The title input produces a string value, so we can store it directly.
+    setEnteredTitle(event.target.value);
+  };
+
+  const amountChangeHandler = (event) => {
+    // Input values arrive as strings, even for <input type="number">.
+    setEnteredAmount(event.target.value);
+  };
+
+  const dateChangeHandler = (event) => {
+    // The browser also gives back the selected date as a string here.
+    setEnteredDate(event.target.value);
   };
 
   // The control wrapper groups related inputs so the layout CSS can arrange them
@@ -27,13 +44,23 @@ const ExpenseForm = () => {
           <label>Amount</label>
           {/* number, min, and step let the browser guide the user toward valid
               currency-like input before any custom validation exists. */}
-          <input type='number' min='0.01' step='0.01' />
+          <input
+            type='number'
+            min='0.01'
+            step='0.01'
+            onChange={amountChangeHandler}
+          />
         </div>
         <div className='new-expense__control'>
           <label>Date</label>
           {/* date gives us the native date picker, while min and max limit the
               allowed range to the years used elsewhere in this demo app. */}
-          <input type='date' min='2019-01-01' max='2022-12-31' />
+          <input
+            type='date'
+            min='2019-01-01'
+            max='2022-12-31'
+            onChange={dateChangeHandler}
+          />
         </div>
       </div>
       <div className='new-expense__actions'>
