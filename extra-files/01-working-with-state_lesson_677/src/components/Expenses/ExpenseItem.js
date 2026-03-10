@@ -23,6 +23,8 @@ const ExpenseItem = (props) => {
   // Using const is correct here because we never replace these bindings with
   // the assignment operator. React updates its own stored value, and this line
   // simply reads the newest snapshot during the next render.
+  // State itself is not tied to a click handler. Any part of the component logic
+  // can request a state update when the application has a reason to do so.
   const [title, setTitle] = useState(props.title);
 
   // ExpenseItem is just a function. React runs it during rendering and uses the
@@ -33,6 +35,10 @@ const ExpenseItem = (props) => {
   console.log('ExpenseItem evaluated by React');
 
   const clickHandler = () => {
+    // This example updates state from a button click because that is an easy
+    // way to demonstrate the feature.
+    // The same updater function could also be used after a timer finishes,
+    // after async work completes, or for any other reason the UI should change.
     // Calling the state updater does more than change a value in memory.
     // It tells React to store the next state value and schedule another render
     // for this component so the JSX can be evaluated again with fresh data.
