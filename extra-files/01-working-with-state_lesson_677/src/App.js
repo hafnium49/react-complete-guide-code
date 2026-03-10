@@ -1,5 +1,6 @@
 import React from 'react';
 
+import NewExpense from './components/NewExpense/NewExpense';
 import Expenses from './components/Expenses/Expenses';
 
 const App = () => {
@@ -27,14 +28,12 @@ const App = () => {
     },
   ];
 
-  // App itself is still stateless here. It prepares data and hands control to
-  // the next component in the tree.
-  // Returning <Expenses /> does not mean App calls that function directly.
-  // Instead, React sees the component in the JSX and invokes it while building
-  // the overall UI description.
+  // App now combines two different concerns:
+  // one branch gathers new expense data and the other branch shows existing
+  // expenses. Keeping both here makes App the composition root for the page.
   return (
     <div>
-      <h2>Let's get started!</h2>
+      <NewExpense />
       <Expenses items={expenses} />
     </div>
   );
