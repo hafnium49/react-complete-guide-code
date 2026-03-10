@@ -3,30 +3,42 @@ import React, { useState } from 'react';
 import './ExpenseForm.css';
 
 const ExpenseForm = () => {
-  // Each field gets its own piece of state so the entered values can survive
-  // rerenders and still be available later when the whole form is submitted.
+  // This version groups the related form fields into one state object instead
+  // of keeping three independent state slices.
   // Empty strings are a sensible starting point because all three inputs begin
   // without any user-provided value.
-  const [enteredTitle, setEnteredTitle] = useState('');
-  const [enteredAmount, setEnteredAmount] = useState('');
-  const [enteredDate, setEnteredDate] = useState('');
+  const [userInput, setUserInput] = useState({
+    enteredTitle: '',
+    enteredAmount: '',
+    enteredDate: '',
+  });
 
-  // Calling useState multiple times in one component is completely normal.
-  // React keeps these state values separate even though they live side by side.
+  // With object state, React replaces the old object with the new one.
+  // That means every update must preserve the fields that should survive.
 
   const titleChangeHandler = (event) => {
-    // The title input produces a string value, so we can store it directly.
-    setEnteredTitle(event.target.value);
+    // Spreading userInput copies the existing fields into the next object
+    // before we override just the title entry.
+    setUserInput({
+      ...userInput,
+      enteredTitle: event.target.value,
+    });
   };
 
   const amountChangeHandler = (event) => {
     // Input values arrive as strings, even for <input type="number">.
-    setEnteredAmount(event.target.value);
+    setUserInput({
+      ...userInput,
+      enteredAmount: event.target.value,
+    });
   };
 
   const dateChangeHandler = (event) => {
     // The browser also gives back the selected date as a string here.
-    setEnteredDate(event.target.value);
+    setUserInput({
+      ...userInput,
+      enteredDate: event.target.value,
+    });
   };
 
   // The control wrapper groups related inputs so the layout CSS can arrange them
