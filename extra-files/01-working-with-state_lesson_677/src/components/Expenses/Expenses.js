@@ -1,53 +1,54 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import ExpenseItem from './ExpenseItem';
+import ExpensesFilter from './ExpensesFilter';
 import Card from '../UI/Card';
 import './Expenses.css';
 
 const Expenses = (props) => {
+  // This state remembers which year is currently selected in the filter.
+  // Keeping it here allows this component to both render the dropdown and
+  // later decide which expense items should stay visible.
+  const [filteredYear, setFilteredYear] = useState('2020');
+
+  // The filter component reports the selected year upward through a callback
+  // prop. Updating state here causes Expenses to render again with the new
+  // value, which also feeds the chosen year back into the dropdown.
+  const filterChangeHandler = (selectedYear) => {
+    setFilteredYear(selectedYear);
+  };
+
+  // This is a derived value: we do not store the filtered list as its own
+  // state because it can always be recomputed from the original items and the
+  // selected year.
+  const filteredExpenses = props.items.filter((expense) => {
+    return expense.date.getFullYear().toString() === filteredYear;
+  });
+
   // Card provides a shared visual wrapper so this component can focus on
   // describing which ExpenseItem components should appear inside it.
-
-  // The expenses are written out one by one here on purpose so the lesson can
-  // stay centered on props and composition before list rendering is introduced.
-  // If this component later gains filter state, any helper text that can be
-  // computed from the selected filter value should usually stay a normal
-  // variable in the component body instead of becoming a second piece of state.
-  // That keeps one source of truth and lets React recompute the text whenever
-  // the real state changes and the component renders again.
-  // Each <ExpenseItem /> in this JSX tells React to evaluate another component
-  // function while it walks down the tree.
-  // Reusing the same component definition four times does not create one shared
-  // state bucket. React creates four separate component instances here.
+  // ExpensesFilter is controlled by this component: the selected value lives in
+  // Expenses, and the child only displays that value and forwards changes.
   // This component is also the destination branch for expense data coming from
   // elsewhere in the tree, which is why that data must be lifted to a parent
   // component first and then passed down here as props.
-  // The title state belongs to each ExpenseItem instance, so the state logic is
-  // placed in the child component instead of in this list component.
-  // Because each rendered ExpenseItem is its own component instance, each one
-  // can react to its own button clicks without affecting the others directly.
   return (
     <Card className="expenses">
-      <ExpenseItem
-        title={props.items[0].title}
-        amount={props.items[0].amount}
-        date={props.items[0].date}
+      <ExpensesFilter
+        selected={filteredYear}
+        onChangeFilter={filterChangeHandler}
       />
-      <ExpenseItem
-        title={props.items[1].title}
-        amount={props.items[1].amount}
-        date={props.items[1].date}
-      />
-      <ExpenseItem
-        title={props.items[2].title}
-        amount={props.items[2].amount}
-        date={props.items[2].date}
-      />
-      <ExpenseItem
-        title={props.items[3].title}
-        amount={props.items[3].amount}
-        date={props.items[3].date}
-      />
+      {filteredExpenses.map((expense) => (
+        // Each rendered ExpenseItem still becomes its own component instance.
+        // React uses the key to keep those instances aligned with the correct
+        // expense data between renders.
+        <ExpenseItem
+          key={expense.id}
+          title={expense.title}
+          amount={expense.amount}
+          date={expense.date}
+        />
+      ))}
     </Card>
   );
 }
