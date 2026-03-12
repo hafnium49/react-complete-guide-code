@@ -6,6 +6,8 @@ const ExpenseForm = (props) => {
   // This version returns to one state slice per field.
   // That keeps each update small and direct because changing the title does not
   // require rebuilding an object that also holds amount and date.
+  // Unlike presentational components, this component is stateful because it is
+  // responsible for tracking the current user input while the form is being edited.
   const [enteredTitle, setEnteredTitle] = useState('');
   const [enteredAmount, setEnteredAmount] = useState('');
   const [enteredDate, setEnteredDate] = useState('');
@@ -77,7 +79,9 @@ const ExpenseForm = (props) => {
               object automatically. A wrapper arrow function would only be needed
               if we wanted to pass extra custom arguments as well.
               value={enteredTitle} closes the loop by feeding the current state
-              back into the input, which makes this a controlled field. */}
+              back into the input, which makes this a controlled field.
+              Controlled inputs are a common example of React managing both the
+              current value and the updates to that value. */}
           <input type='text' value={enteredTitle} onChange={titleChangeHandler} />
         </div>
         <div className='new-expense__control'>

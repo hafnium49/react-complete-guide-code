@@ -6,6 +6,8 @@ import './NewExpense.css';
 const NewExpense = (props) => {
   // ExpenseForm creates the raw form data. NewExpense enriches it with an id
   // before forwarding it to the next parent component.
+  // This component itself stays fairly lean: it coordinates data flow, but it
+  // does not need to own its own local state in this lesson.
   const saveExpenseDataHandler = (enteredExpenseData) => {
     const expenseData = {
       ...enteredExpenseData,
