@@ -16,6 +16,9 @@ const NewExpense = (props) => {
 
     // Child-to-parent communication in React usually works through callback
     // props like this one.
+    // NewExpense acts as an intermediate stop in the lift-up chain because
+    // ExpenseForm cannot send data straight to App without going through the
+    // component that renders it.
     props.onAddExpense(expenseData);
   };
 

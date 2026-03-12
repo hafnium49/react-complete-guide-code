@@ -14,6 +14,9 @@ const Expenses = (props) => {
   // function while it walks down the tree.
   // Reusing the same component definition four times does not create one shared
   // state bucket. React creates four separate component instances here.
+  // This component is also the destination branch for expense data coming from
+  // elsewhere in the tree, which is why that data must be lifted to a parent
+  // component first and then passed down here as props.
   // The title state belongs to each ExpenseItem instance, so the state logic is
   // placed in the child component instead of in this list component.
   // Because each rendered ExpenseItem is its own component instance, each one

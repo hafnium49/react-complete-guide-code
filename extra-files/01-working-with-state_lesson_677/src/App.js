@@ -28,6 +28,9 @@ const App = () => {
     },
   ];
 
+  // App is the closest shared parent of both the "create expense" branch and
+  // the "show expenses" branch. That makes it the right place to receive data
+  // that starts in one branch but will eventually matter in the other one.
   // The new expense data ultimately matters here because App is the first
   // component in this tree that also knows about the existing expenses list.
   // The actual list update will come in a later section, so logging the received
@@ -44,6 +47,8 @@ const App = () => {
       {/* Passing a function down like a prop lets child components call back into
           App later with newly created data. */}
       <NewExpense onAddExpense={addExpenseHandler} />
+      {/* This is the sibling branch that will later receive the updated expense
+          list from App after the lifted data has been merged into it. */}
       <Expenses items={expenses} />
     </div>
   );

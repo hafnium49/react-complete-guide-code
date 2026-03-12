@@ -50,6 +50,9 @@ const ExpenseForm = (props) => {
     // Instead of keeping the finished data inside this component, we hand it to
     // the parent through the callback prop. The parent can then decide what
     // "save" means for the rest of the app.
+    // This is the first step of lifting the data up: the state is created here,
+    // but it is moved upward because another branch of the component tree will
+    // eventually need to know about the new expense.
     props.onSaveExpenseData(expenseData);
 
     // Because the inputs read their displayed value from state, resetting the
