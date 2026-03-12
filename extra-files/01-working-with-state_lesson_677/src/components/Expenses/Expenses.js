@@ -10,6 +10,11 @@ const Expenses = (props) => {
 
   // The expenses are written out one by one here on purpose so the lesson can
   // stay centered on props and composition before list rendering is introduced.
+  // If this component later gains filter state, any helper text that can be
+  // computed from the selected filter value should usually stay a normal
+  // variable in the component body instead of becoming a second piece of state.
+  // That keeps one source of truth and lets React recompute the text whenever
+  // the real state changes and the component renders again.
   // Each <ExpenseItem /> in this JSX tells React to evaluate another component
   // function while it walks down the tree.
   // Reusing the same component definition four times does not create one shared
