@@ -42,9 +42,23 @@ const ExpenseForm = (props) => {
   const submitHandler = (event) => {
     event.preventDefault();
 
+    // --- Lesson 705: Fixing the String-to-Number Bug ---
+    //
+    // HTML input elements always produce string values, even when
+    // the input type is "number". If enteredAmount is passed along
+    // as-is, JavaScript's + operator will concatenate strings
+    // instead of adding numbers (e.g. "10" + "20" = "1020").
+    //
+    // The unary plus operator (+enteredAmount) converts the string
+    // to a number before storing it in the expense object. This
+    // ensures that downstream arithmetic — such as the += in
+    // ExpensesChart and the percentage calculation in ChartBar —
+    // works correctly. Other valid conversion approaches include
+    // Number(enteredAmount) or parseFloat(enteredAmount), but the
+    // unary + is the most concise.
     const expenseData = {
       title: enteredTitle,
-      amount: enteredAmount,
+      amount: +enteredAmount,
       date: new Date(enteredDate),
     };
 
