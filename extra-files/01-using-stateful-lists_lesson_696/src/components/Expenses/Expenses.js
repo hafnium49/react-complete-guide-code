@@ -9,13 +9,11 @@
 //   over ALL items in props.items. A .filter() step that
 //   narrows the array to the selected year is missing.
 //
-//   Gap 2 — No key prop on ExpenseItem: React needs a stable,
-//   unique identifier on each element in a dynamically rendered
-//   list so it can efficiently track additions, removals, and
-//   reordering. Without it, React falls back to using array
-//   indices, which leads to subtle bugs when the list changes.
+//   Gap 2 — No key prop on ExpenseItem: RESOLVED in Lesson 699.
+//   key={expense.id} is now passed, allowing React to track
+//   each item by identity rather than by position.
 //
-// Both gaps are addressed in the next few lessons.
+// Gap 1 (filtering) is addressed in a later lesson.
 //
 // --- Lesson 697: Rendering Lists of Data ---
 //
@@ -69,11 +67,6 @@ const Expenses = (props) => {
   // NOTE: props.items is rendered without filtering — every
   // expense appears regardless of the selected year. This is
   // the starting state; filtering will be added in a later lesson.
-  //
-  // Also notice that .map() produces an ExpenseItem for each
-  // element but does NOT pass a "key" prop. React will log a
-  // warning about this. Adding key={expense.id} is one of the
-  // first things this section will address.
   return (
     <div>
       <Card className='expenses'>
@@ -103,9 +96,50 @@ const Expenses = (props) => {
           * .map() makes the list self-adjusting: add an item
           * to the state array and a new row appears; remove one
           * and the corresponding row disappears.
+          *
+          * --- Lesson 699: Understanding "Keys" ---
+          *
+          * The key prop tells React which data item each DOM
+          * element corresponds to. Without it, React only knows
+          * the array grew or shrank by comparing lengths. When a
+          * new item is prepended, React appends a NEW div at the
+          * END of the DOM list and then walks through every
+          * existing element, updating its content to match the
+          * shifted array positions. This means:
+          *
+          *   - Every single list item gets re-written, even if
+          *     its actual data has not changed (performance cost).
+          *   - If any ExpenseItem held internal state (e.g. a
+          *     toggled highlight), that state would be associated
+          *     with a DOM position, not with the data. After the
+          *     shift, state would "stick" to the wrong item (bug).
+          *
+          * Adding key={expense.id} solves both problems. React
+          * can now match each element to its data by identity
+          * rather than by position. When a new expense arrives,
+          * React knows exactly where to insert the new DOM node
+          * and leaves existing nodes untouched.
+          *
+          * Rules for choosing key values:
+          *   - Use a value that is unique among siblings and
+          *     permanently tied to the data (e.g. a database ID).
+          *   - Do NOT use the array index as a key. The index is
+          *     positional — it changes whenever items are added,
+          *     removed, or reordered — so it provides no better
+          *     identity signal than having no key at all.
+          *   - In practice, most real-world data already has a
+          *     unique identifier (from a database, an API, or a
+          *     UUID generated at creation time).
+          *   - The key can be any primitive (string or number).
+          *
+          * Note: key is a reserved prop — React consumes it
+          * internally. It is NOT forwarded to the child component
+          * via props. If ExpenseItem also needs the id for its
+          * own logic, pass it as a separate prop (e.g. id=...).
           */}
         {props.items.map((expense) => (
           <ExpenseItem
+            key={expense.id}
             title={expense.title}
             amount={expense.amount}
             date={expense.date}
