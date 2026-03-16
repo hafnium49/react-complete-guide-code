@@ -35,9 +35,21 @@ import React, { useState } from 'react';
 import NewExpense from './components/NewExpense/NewExpense';
 import Expenses from './components/Expenses/Expenses';
 
-// Initial seed data defined outside the component so it is created
-// only once. In a real app this would come from a database or API;
-// here it serves as the starting contents of the expenses state.
+// --- Lesson 698: Using Stateful Lists ---
+//
+// Why does this array need to be state at all? Simply pushing a
+// new item onto a plain JavaScript array would NOT cause React to
+// re-render the component. React only re-evaluates a component
+// when its state (or its parent's state) changes. So to make the
+// list update on screen when a user submits a new expense, we
+// must manage the array with useState and update it through the
+// setter function.
+//
+// The dummy data is extracted into a constant outside the
+// component so it is only created once — not on every render.
+// It is passed to useState as the initial value. After the first
+// render, React ignores this argument; all subsequent changes
+// come exclusively through setExpenses.
 const DUMMY_EXPENSES = [
   {
     id: 'e1',
@@ -67,10 +79,24 @@ const App = () => {
   const [expenses, setExpenses] = useState(DUMMY_EXPENSES);
 
   // When NewExpense submits a new entry, this handler prepends it
-  // to the existing array. The functional form of the setter
-  // (receiving prevExpenses) guarantees we always work with the
-  // most recent snapshot, which matters when multiple state
-  // updates could be batched by React.
+  // to the existing array.
+  //
+  // A naive approach would be:
+  //   setExpenses([expense, ...expenses]);
+  // This would work in many cases, but it references the
+  // "expenses" variable captured in the closure, which may be
+  // stale if React has batched multiple updates together.
+  //
+  // The correct pattern is the functional form: pass a function
+  // to the setter, and React will call it with the guaranteed
+  // latest snapshot (prevExpenses). This eliminates any risk of
+  // working with an outdated array.
+  //
+  // Inside the callback we build a brand-new array using the
+  // spread operator on prevExpenses. The spread operator works
+  // on arrays the same way it works on objects — it pulls out
+  // every existing element and places them after the new expense.
+  // The new item goes first so it appears at the top of the list.
   const addExpenseHandler = (expense) => {
     setExpenses((prevExpenses) => {
       return [expense, ...prevExpenses];
