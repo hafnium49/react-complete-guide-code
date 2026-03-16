@@ -84,9 +84,17 @@ const App = () => {
   //   React.createElement(Expenses, { items: expenses })
   // );
 
-  // The entire expenses array is passed down to Expenses, which
-  // is responsible for filtering and rendering individual items.
-  // NewExpense receives the handler so it can push new data upward.
+  // --- Lesson 697: How dynamic rendering connects to state ---
+  //
+  // The entire expenses array is passed to Expenses as items.
+  // Inside Expenses, .map() transforms that array into JSX.
+  // When addExpenseHandler prepends a new expense via the setter
+  // above, React re-renders this component with the updated
+  // array, which flows into Expenses, which re-runs .map(),
+  // and the new item appears automatically. This is the payoff
+  // of combining stateful arrays with dynamic list rendering:
+  // the UI stays in sync with the data without any imperative
+  // DOM manipulation.
   return (
     <div>
       <NewExpense onAddExpense={addExpenseHandler} />

@@ -16,6 +16,39 @@
 //   indices, which leads to subtle bugs when the list changes.
 //
 // Both gaps are addressed in the next few lessons.
+//
+// --- Lesson 697: Rendering Lists of Data ---
+//
+// In most real applications, the number of items to display is
+// not known at build time — users add and remove data at runtime.
+// Hard-coding a fixed number of <ExpenseItem> elements (as we
+// did in earlier sections) does not scale. Instead, we render
+// lists dynamically using JavaScript's built-in Array.map().
+//
+// How .map() works in this context:
+//
+//   1. props.items is an array of expense objects, each with
+//      fields like title, amount, and date.
+//
+//   2. Calling props.items.map(fn) creates a NEW array whose
+//      elements are whatever fn returns for each input element.
+//      The original array is not mutated.
+//
+//   3. Inside the callback we return a JSX element (<ExpenseItem>)
+//      for each expense object. This transforms the plain data
+//      array into an array of React elements.
+//
+//   4. When React encounters an array of JSX elements inside
+//      curly braces in the return statement, it renders each
+//      element in order — just as if they had been written out
+//      one by one in the markup.
+//
+// The key advantage is that the rendered output automatically
+// reflects whatever is in the array at the time of rendering.
+// If a new expense is added to state (via setExpenses in App.js),
+// React re-executes this component, .map() runs again over the
+// updated array, and the new item appears in the UI without any
+// manual DOM manipulation.
 import React, { useState } from 'react';
 
 import ExpenseItem from './ExpenseItem';
@@ -48,6 +81,29 @@ const Expenses = (props) => {
           selected={filteredYear}
           onChangeFilter={filterChangeHandler}
         />
+        {/* --- Dynamic list rendering with .map() ---
+          *
+          * The curly braces open a JavaScript expression inside
+          * JSX. props.items.map() iterates over every expense
+          * object in the array and returns a new array of
+          * <ExpenseItem> elements. React renders that array
+          * as sibling DOM nodes.
+          *
+          * The arrow function receives each expense object as
+          * its parameter. We destructure its properties into
+          * the corresponding props that ExpenseItem expects.
+          * Because the arrow uses parentheses (not braces),
+          * the JSX element is implicitly returned — no explicit
+          * "return" keyword is needed.
+          *
+          * Previously, four <ExpenseItem> elements were written
+          * out by hand with hardcoded array indices like
+          * props.items[0], props.items[1], etc. That approach
+          * breaks as soon as the array length changes. Using
+          * .map() makes the list self-adjusting: add an item
+          * to the state array and a new row appears; remove one
+          * and the corresponding row disappears.
+          */}
         {props.items.map((expense) => (
           <ExpenseItem
             title={expense.title}
