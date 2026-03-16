@@ -58,6 +58,14 @@ import ExpensesFilter from './ExpensesFilter';
 // state and passing the filtered array down. This separation
 // keeps each component focused on a single concern.
 import ExpensesList from './ExpensesList';
+// --- Lesson 704: Wiring up the chart ---
+//
+// ExpensesChart sits between this component and the generic Chart.
+// It receives the filtered expenses, aggregates them by month,
+// and passes the result to Chart as data points. Placing it here
+// — between the filter and the list — means it always reflects
+// the currently selected year.
+import ExpensesChart from './ExpensesChart';
 import './Expenses.css';
 
 const Expenses = (props) => {
@@ -105,6 +113,7 @@ const Expenses = (props) => {
           selected={filteredYear}
           onChangeFilter={filterChangeHandler}
         />
+        <ExpensesChart expenses={filteredExpenses} />
         <ExpensesList items={filteredExpenses} />
       </Card>
     </div>
