@@ -4,16 +4,15 @@
 // Section 05. At this starting point it has two gaps that the
 // upcoming lessons will fill:
 //
-//   Gap 1 — No actual filtering: the dropdown updates
-//   filteredYear in state, but the .map() call still iterates
-//   over ALL items in props.items. A .filter() step that
-//   narrows the array to the selected year is missing.
+//   Gap 1 — No actual filtering: RESOLVED in Lesson 700.
+//   A .filter() call now narrows the array to the selected
+//   year before mapping it to JSX elements.
 //
 //   Gap 2 — No key prop on ExpenseItem: RESOLVED in Lesson 699.
 //   key={expense.id} is now passed, allowing React to track
 //   each item by identity rather than by position.
 //
-// Gap 1 (filtering) is addressed in a later lesson.
+// Both gaps are now closed.
 //
 // --- Lesson 697: Rendering Lists of Data ---
 //
@@ -64,9 +63,76 @@ const Expenses = (props) => {
     setFilteredYear(selectedYear);
   };
 
-  // NOTE: props.items is rendered without filtering — every
-  // expense appears regardless of the selected year. This is
-  // the starting state; filtering will be added in a later lesson.
+  // --- Lesson 700: Filtering the list ---
+  //
+  // Array.filter() works like .map() — it takes a callback that
+  // runs for every element — but instead of transforming each
+  // element, it keeps only those for which the callback returns
+  // true. The result is a new array (the original is untouched).
+  //
+  // Here we compare each expense's year (extracted with
+  // getFullYear() and converted to a string) against the
+  // filteredYear state. Only matching expenses survive into
+  // filteredExpenses. Because this runs inside the component
+  // function, it re-executes every time filteredYear changes
+  // via a state update — the list on screen updates automatically.
+  const filteredExpenses = props.items.filter((expense) => {
+    return expense.date.getFullYear().toString() === filteredYear;
+  });
+
+  // --- Lesson 700: Outputting Conditional Content ---
+  //
+  // When filteredExpenses is empty we want to show a fallback
+  // message instead of rendering nothing. There are three common
+  // approaches to conditional rendering in React:
+  //
+  //   Approach 1 — Ternary expression in JSX:
+  //     {filteredExpenses.length === 0
+  //       ? <p>No expenses found.</p>
+  //       : filteredExpenses.map(...)}
+  //     Works, but long ternaries become hard to read.
+  //
+  //   Approach 2 — Logical AND (&&) operator:
+  //     {filteredExpenses.length === 0 && <p>No expenses found.</p>}
+  //     {filteredExpenses.length > 0 && filteredExpenses.map(...)}
+  //     Shorter, but splits the logic across two expressions.
+  //     This works because JavaScript's && returns the right-hand
+  //     operand when the left-hand side is truthy, and returns
+  //     the left-hand side (a falsy value) when it is falsy —
+  //     React ignores falsy values like false and 0 in JSX.
+  //
+  //   Approach 3 — Variable with an if-check (used here):
+  //     Assign a default JSX value to a variable, then overwrite
+  //     it with an if-check before the return statement. This
+  //     keeps the returned JSX lean and moves the decision logic
+  //     into plain JavaScript above the return.
+  //
+  // All three produce identical output. The variable approach
+  // tends to be the cleanest when conditions are complex or when
+  // there are more than two branches.
+  //
+  // A key insight: JSX can be stored in variables just like any
+  // other value. It is not limited to the return statement. You
+  // can assign it, pass it as an argument, or place it in an
+  // array — React will render it wherever it ends up in the tree.
+  let expensesContent = <p>No expenses found.</p>;
+
+  if (filteredExpenses.length > 0) {
+    expensesContent = filteredExpenses.map((expense) => (
+      // --- Lesson 699 key and Lesson 697 .map() comments apply
+      // --- here — see header comments above for full explanations.
+      <ExpenseItem
+        key={expense.id}
+        title={expense.title}
+        amount={expense.amount}
+        date={expense.date}
+      />
+    ));
+  }
+
+  // The returned JSX is now lean: {expensesContent} holds either
+  // the fallback paragraph or the mapped list of ExpenseItems,
+  // determined by the if-check above. No ternary or && clutter.
   return (
     <div>
       <Card className='expenses'>
@@ -77,14 +143,13 @@ const Expenses = (props) => {
         {/* --- Dynamic list rendering with .map() ---
           *
           * The curly braces open a JavaScript expression inside
-          * JSX. props.items.map() iterates over every expense
-          * object in the array and returns a new array of
-          * <ExpenseItem> elements. React renders that array
-          * as sibling DOM nodes.
+          * JSX. .map() iterates over every expense object in the
+          * filtered array and returns a new array of <ExpenseItem>
+          * elements. React renders that array as sibling DOM nodes.
           *
           * The arrow function receives each expense object as
-          * its parameter. We destructure its properties into
-          * the corresponding props that ExpenseItem expects.
+          * its parameter. We extract its properties into the
+          * corresponding props that ExpenseItem expects.
           * Because the arrow uses parentheses (not braces),
           * the JSX element is implicitly returned — no explicit
           * "return" keyword is needed.
@@ -137,14 +202,7 @@ const Expenses = (props) => {
           * via props. If ExpenseItem also needs the id for its
           * own logic, pass it as a separate prop (e.g. id=...).
           */}
-        {props.items.map((expense) => (
-          <ExpenseItem
-            key={expense.id}
-            title={expense.title}
-            amount={expense.amount}
-            date={expense.date}
-          />
-        ))}
+        {expensesContent}
       </Card>
     </div>
   );
