@@ -1,23 +1,49 @@
 import logo from './assets/investment-calculator-logo.png';
 
+/*
+  TUTOR NOTE:
+  Welcome to your first practice project! 
+  Currently, this file contains the entire application in a single component.
+  Your overarching goal is to refactor this code to follow React best practices:
+  - Component Splitting
+  - State Management
+  - Conditional Rendering
+  - List Outputting
+  
+  Please follow the steps outlined in the comments below to progressively build
+  and refine this application.
+*/
+
 function App() {
+  /*
+    TASK 1: State Management
+    To keep track of the submitted data and recalculate our table, we need state.
+    Use the 'useState' hook here to manage the user's input data or the calculated results.
+    We will use this state to determine what to render on the screen.
+  */
+
   const calculateHandler = (userInput) => {
-    // Should be triggered when form is submitted
-    // You might not directly want to bind it to the submit event on the form though...
+    /*
+      TASK 2: Event Handling
+      This function should be executed upon form submission. However, rather than 
+      binding it directly to the native submit event, you should trigger it from 
+      within your dedicated form component (once extracted), passing the gathered 
+      user inputs up to this parent component (Lifting State Up).
+    */
 
-    const yearlyData = []; // per-year results
+    const yearlyData = []; // This array will hold the calculated per-year results
 
-    let currentSavings = +userInput['current-savings']; // feel free to change the shape of this input object!
-    const yearlyContribution = +userInput['yearly-contribution']; // as mentioned: feel free to change the shape...
-    const expectedReturn = +userInput['expected-return'] / 100;
-    const duration = +userInput['duration'];
+    let currentSavings = +userInput['current-savings']; // The starting balance
+    const yearlyContribution = +userInput['yearly-contribution']; // Amount added annually
+    const expectedReturn = +userInput['expected-return'] / 100; // Annual interest rate percentage
+    const duration = +userInput['duration']; // Overall timeframe in years
 
-    // The below code calculates yearly results (total savings, interest etc)
+    // The loop iterates over each year to calculate compound interest and total savings
     for (let i = 0; i < duration; i++) {
       const yearlyInterest = currentSavings * expectedReturn;
       currentSavings += yearlyInterest + yearlyContribution;
+      
       yearlyData.push({
-        // feel free to change the shape of the data pushed to the array!
         year: i + 1,
         yearlyInterest: yearlyInterest,
         savingsEndOfYear: currentSavings,
@@ -25,16 +51,39 @@ function App() {
       });
     }
 
-    // do something with yearlyData ...
+    /*
+      TASK 3: Update State
+      Now that we have the derived calculations stored in the 'yearlyData' array (or the raw 
+      userInput data), update the component state you created in TASK 1. 
+      Updating the state will cause React to re-evaluate and re-render the UI based on 
+      the fresh information.
+    */
   };
 
+  /*
+    TUTOR NOTE on Component Extraction:
+    The JSX returned below is monolithic. It is considered good practice to break down 
+    large interfaces into smaller, reusable building blocks.
+  */
   return (
     <div>
+      {/* 
+        TASK 4: Header Component Extraction
+        Extract the <header> element along with its logo image and title into its own 
+        functional component (e.g., 'Header'). Don't forget to move the logo import as well!
+      */}
       <header className="header">
         <img src={logo} alt="logo" />
         <h1>Investment Calculator</h1>
       </header>
 
+      {/* 
+        TASK 5: User Input Component Extraction
+        Extract this entire <form> structure into a separate component (e.g., 'UserInput').
+        Inside that new component, you will need to handle changes to the input fields,
+        manage local state for the form values, and safely call the 'calculateHandler' 
+        passed down via props when the form is submitted.
+      */}
       <form className="form">
         <div className="input-group">
           <p>
@@ -68,9 +117,23 @@ function App() {
         </p>
       </form>
 
-      {/* Todo: Show below table conditionally (only once result data is available) */}
-      {/* Show fallback text if no data is available */}
+      {/* 
+        TASK 6: Conditional Content
+        The financial data table should only appear if the user has successfully 
+        submitted the form and the data has been computed. If no state data exists, 
+        render a simple fallback paragraph indicating that nothing has been calculated yet.
+      */}
 
+      {/* 
+        TASK 7: Results Table Component Extraction
+        Move this <table> markup into a new component (e.g., 'ResultsTable').
+        Pass the calculated yearly data down to it via props.
+        
+        TASK 8: Outputting Lists
+        Within the new ResultsTable component, map over the received data array.
+        For each year's data item, yield a corresponding <tr> element containing 
+        the correctly formatted values. Ensure each rendered row provides a unique 'key' prop.
+      */}
       <table className="result">
         <thead>
           <tr>
