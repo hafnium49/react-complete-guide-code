@@ -1,5 +1,15 @@
 @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700&family=Roboto+Condensed:wght@400;700&display=swap');
 
+/*
+  TASK 5 (Bonus Task): Styling Improvements
+  You can dive deeper into styling as an extra challenge. Feel free to explore:
+  - Using Styled Components instead of traditional CSS.
+  - Splitting this global 'index.css' file into individual CSS Modules that are 
+    scoped to the specific components you extract (e.g., Header.module.css).
+  
+  You are also encouraged to tweak these styles to meet your personal preferences!
+*/
+
 * {
   box-sizing: border-box;
 }
