@@ -1,44 +1,36 @@
+import { useState } from 'react';
 import Header from './components/Header/Header';
 import UserInput from './components/UserInput/UserInput';
 import ResultsTable from './components/ResultsTable/ResultsTable';
 
-/*
-  TUTOR'S GUIDANCE:
-  Welcome back! Here are some extended hints to help you architect this React app intelligently.
-  - Identify potentially reusable building blocks to split the app into custom components. 
-    However, try not to be too granular (e.g., there's no need for every single DOM element 
-    to be a separate component).
-*/
-
 function App() {
-
   /*
-    TASK 3: State Management & Lifting State Up
-    - Manage the user's input state. It's up to you to decide if you want to store it 
-      as a single object or as multiple, individual state slices.
-    - If your inputs are inside a separated 'UserInput' component, don't forget 
-      to "lift state up" back to this 'App' component so the calculation logic can run.
-    - Think carefully about whether you actually need to manage the calculated results 
-      as entirely new state. You might be able to simply *derive* the calculation 
-      results directly from the submitted user input state on every render!
+    TUTOR'S GUIDANCE:
+    "Lifting State Up"
+    We define our base state here at the nearest common ancestor of our components. 
+    By setting this initially to `null`, we know exactly when to render our fallback UI!
   */
+  const [userInput, setUserInput] = useState(null);
 
   const calculateHandler = (userInput) => {
     /*
-      TASK 2: Event Handling
-      There are three main events your app must listen and respond to:
-      1. Form submission (handled here)
-      2. Reset button being clicked
-      3. User input changing (in the various <input /> fields) -> For these, consider 
-         using a generic/shared change handler function to handle them all gracefully.
-         
-      Also, feel free to manipulate this `calculateHandler`. If it makes more sense, 
-      you can execute the calculation logic right inside the component instead of 
-      trapping it in this specific handler function.
+      TUTOR'S GUIDANCE:
+      Rather than trapping all of the logic inside this event handler, we keep it incredibly lean.
+      We only use it strictly to catch the user input lifted up from our `UserInput` child component 
+      and inject it into our App-level state.
     */
+    setUserInput(userInput);
+  };
 
-    const yearlyData = []; 
+  /*
+    TUTOR'S GUIDANCE:
+    "Derived State"
+    Instead of manually setting `yearlyData` into its own `useState` instance (causing redundant renders), 
+    we let it generate dynamically right here in the component body during every render *if* input data exists!
+  */
+  const yearlyData = []; 
 
+  if (userInput) {
     let currentSavings = +userInput['current-savings']; 
     const yearlyContribution = +userInput['yearly-contribution']; 
     const expectedReturn = +userInput['expected-return'] / 100; 
@@ -55,20 +47,18 @@ function App() {
         yearlyContribution: yearlyContribution,
       });
     }
-
-  };
-
-  /*
-    TASK 1: Component Splitting
-    Awesome! You have logically separated the view layout into specific modules.
-    We import and return them down below. 
-  */
+  }
 
   return (
     <div>
       <Header />
 
-      <UserInput />
+      {/*
+        TUTOR'S GUIDANCE:
+        Here we pass down our incredibly lean `calculateHandler` under the custom `onCalculate` prop. 
+        When the internal `<form>` is submitted within UserInput, this function catches that payload!
+      */}
+      <UserInput onCalculate={calculateHandler} />
 
       {/* 
         TASK 4: Conditional Output & Formatting

@@ -17,7 +17,7 @@ const initialUserInput = {
   duration: 10,
 };
 
-const UserInput = () => {
+const UserInput = (props) => {
   /*
     TUTOR'S GUIDANCE:
     Here we hook into React's state system! We pass our initial object and destructure 
@@ -29,8 +29,15 @@ const UserInput = () => {
 
   const submitHandler = (event) => {
     event.preventDefault();
-    // Implementation to follow...
-    console.log('SUBMIT');
+
+    /*
+      TUTOR'S GUIDANCE:
+      "Lifting State Up"
+      We trigger the `onCalculate` function passed down from our parent (App.js) via props.
+      By feeding our internal `userInput` state into this function, we securely elevate 
+      the form data up to the parent component where the actual calculations will occur!
+    */
+    props.onCalculate(userInput);
   };
 
   const resetHandler = () => {
