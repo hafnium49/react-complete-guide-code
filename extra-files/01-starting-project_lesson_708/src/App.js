@@ -2,44 +2,46 @@ import logo from './assets/investment-calculator-logo.png';
 
 /*
   TUTOR'S GUIDANCE:
-  Welcome to your first demo project!
-  You have this one monolithic file right now. You shouldn't try to leave it like this.
-  Instead, your goal is to practice React's essential concepts. I've broken these down
-  into specific tasks below.
-  
-  Note: Some calculation logic has already been provided to save you time! 
+  Welcome back! Here are some extended hints to help you architect this React app intelligently.
+  - Identify potentially reusable building blocks to split the app into custom components. 
+    However, try not to be too granular (e.g., there's no need for every single DOM element 
+    to be a separate component).
 */
 
 function App() {
 
   /*
-    TASK 3: State Management
-    You need to manage state somehow. It's your choice whether you prefer keeping
-    several independent state slices or combining them into larger state objects.
-    - First, capture and maintain the user's form inputs.
-    - Second, you must eventually store the resulting investment data here 
-      so that it can be passed along to your output component.
+    TASK 3: State Management & Lifting State Up
+    - Manage the user's input state. It's up to you to decide if you want to store it 
+      as a single object or as multiple, individual state slices.
+    - If your inputs are inside a separated 'UserInput' component, don't forget 
+      to "lift state up" back to this 'App' component so the calculation logic can run.
+    - Think carefully about whether you actually need to manage the calculated results 
+      as entirely new state. You might be able to simply *derive* the calculation 
+      results directly from the submitted user input state on every render!
   */
 
   const calculateHandler = (userInput) => {
     /*
       TASK 2: Event Handling
-      You should make sure functions respond when your forms are being submitted 
-      and when the 'reset' button is clicked. They don't have to do anything 
-      fancy right away, but you definitely need handlers firing for both events!
-      
-      For the submit event, this `calculateHandler` will take user input and
-      compute the yearly results.
+      There are three main events your app must listen and respond to:
+      1. Form submission (handled here)
+      2. Reset button being clicked
+      3. User input changing (in the various <input /> fields) -> For these, consider 
+         using a generic/shared change handler function to handle them all gracefully.
+         
+      Also, feel free to manipulate this `calculateHandler`. If it makes more sense, 
+      you can execute the calculation logic right inside the component instead of 
+      trapping it in this specific handler function.
     */
 
-    const yearlyData = []; // This array will hold the calculated per-year results
+    const yearlyData = []; 
 
-    let currentSavings = +userInput['current-savings']; // The starting balance
-    const yearlyContribution = +userInput['yearly-contribution']; // Amount added annually
-    const expectedReturn = +userInput['expected-return'] / 100; // Annual interest rate percentage
-    const duration = +userInput['duration']; // Overall timeframe in years
+    let currentSavings = +userInput['current-savings']; 
+    const yearlyContribution = +userInput['yearly-contribution']; 
+    const expectedReturn = +userInput['expected-return'] / 100; 
+    const duration = +userInput['duration']; 
 
-    // The loop iterates over each year to calculate compound interest and total savings
     for (let i = 0; i < duration; i++) {
       const yearlyInterest = currentSavings * expectedReturn;
       currentSavings += yearlyInterest + yearlyContribution;
@@ -52,18 +54,12 @@ function App() {
       });
     }
 
-    /*
-      After computation, be sure to update your component's state with the derived 
-      investment data. This triggers React to output your results!
-    */
   };
 
   /*
     TASK 1: Component Splitting
-    The JSX code below represents the entire application interface. 
-    Review it and identify logical visual parts. You should separate this into 
-    at least a few distinct, smaller components (for instance: a Header, 
-    a UserInput form, and a ResultsTable).
+    Separate this monolithic JSX out into logical components (e.g., Header, 
+    UserInput, ResultsTable). 
   */
 
   return (
@@ -108,11 +104,21 @@ function App() {
       </form>
 
       {/* 
-        TASK 4: Conditional Output & Dynamic Content
-        You shouldn't always show the table. 
-        - If no calculations have been triggered yet, display a simple fallback paragraph.
-        - If data *is* available, output this table conditionally.
-        - Inside the table, map your state data dynamically into rows (one <tr> per individual year).
+        TASK 4: Conditional Output & Formatting
+        - Output the table below conditionally (e.g., only if calculation data is present).
+        - When mapping over the data to build out the rows, make sure to format the currency 
+          values properly. 
+          
+          Here's a handy formatter snippet you can use:
+          
+          const formatter = new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD',
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          });
+          ...
+          formatter.format(yourValue);
       */}
 
       <table className="result">
