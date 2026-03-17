@@ -61,24 +61,19 @@ function App() {
       <UserInput onCalculate={calculateHandler} />
 
       {/* 
-        TASK 4: Conditional Output & Formatting
-        - Output the table below conditionally (e.g., only if calculation data is present).
-        - When mapping over the data to build out the rows, make sure to format the currency 
-          values properly. 
-          
-          Here's a handy formatter snippet you can use:
-          
-          const formatter = new Intl.NumberFormat('en-US', {
-            style: 'currency',
-            currency: 'USD',
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          });
-          ...
-          formatter.format(yourValue);
+        TUTOR'S GUIDANCE:
+        "Conditional Rendering"
+        If there is no user input state yet (i.e. it's null), we show a fallback paragraph.
+        Otherwise, we output the beautiful ResultsTable, passing down our derived data array 
+        and the initial investment base reference via props so the table can crunch the final numbers!
       */}
-
-      <ResultsTable />
+      {!userInput && <p style={{ textAlign: 'center' }}>No investment calculated yet.</p>}
+      {userInput && (
+        <ResultsTable 
+          data={yearlyData} 
+          initialInvestment={userInput['current-savings']} 
+        />
+      )}
     </div>
   );
 }
