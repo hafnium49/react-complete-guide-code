@@ -1,4 +1,6 @@
-import logo from './assets/investment-calculator-logo.png';
+import Header from './components/Header/Header';
+import UserInput from './components/UserInput/UserInput';
+import ResultsTable from './components/ResultsTable/ResultsTable';
 
 /*
   TUTOR'S GUIDANCE:
@@ -58,50 +60,15 @@ function App() {
 
   /*
     TASK 1: Component Splitting
-    Separate this monolithic JSX out into logical components (e.g., Header, 
-    UserInput, ResultsTable). 
+    Awesome! You have logically separated the view layout into specific modules.
+    We import and return them down below. 
   */
 
   return (
     <div>
-      <header className="header">
-        <img src={logo} alt="logo" />
-        <h1>Investment Calculator</h1>
-      </header>
+      <Header />
 
-      <form className="form">
-        <div className="input-group">
-          <p>
-            <label htmlFor="current-savings">Current Savings ($)</label>
-            <input type="number" id="current-savings" />
-          </p>
-          <p>
-            <label htmlFor="yearly-contribution">Yearly Savings ($)</label>
-            <input type="number" id="yearly-contribution" />
-          </p>
-        </div>
-        <div className="input-group">
-          <p>
-            <label htmlFor="expected-return">
-              Expected Interest (%, per year)
-            </label>
-            <input type="number" id="expected-return" />
-          </p>
-          <p>
-            <label htmlFor="duration">Investment Duration (years)</label>
-            <input type="number" id="duration" />
-          </p>
-        </div>
-        <p className="actions">
-          {/* Be sure to attach an event handler to respond to this reset click! */}
-          <button type="reset" className="buttonAlt">
-            Reset
-          </button>
-          <button type="submit" className="button">
-            Calculate
-          </button>
-        </p>
-      </form>
+      <UserInput />
 
       {/* 
         TASK 4: Conditional Output & Formatting
@@ -121,26 +88,7 @@ function App() {
           formatter.format(yourValue);
       */}
 
-      <table className="result">
-        <thead>
-          <tr>
-            <th>Year</th>
-            <th>Total Savings</th>
-            <th>Interest (Year)</th>
-            <th>Total Interest</th>
-            <th>Invested Capital</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>YEAR NUMBER</td>
-            <td>TOTAL SAVINGS END OF YEAR</td>
-            <td>INTEREST GAINED IN YEAR</td>
-            <td>TOTAL INTEREST GAINED</td>
-            <td>TOTAL INVESTED CAPITAL</td>
-          </tr>
-        </tbody>
-      </table>
+      <ResultsTable />
     </div>
   );
 }
