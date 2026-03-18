@@ -1,0 +1,22 @@
+/*
+  TUTOR'S GUIDANCE:
+  "CSS Modules"
+  As part of the bonus task, we extracted the styling strictly related to the Header component 
+  into its own scoped Module file. Handled automatically by our build tool, this prevents CSS 
+  rules from leaking and conflicting globally!
+*/
+.header {
+  text-align: center;
+  margin: 3rem auto;
+}
+
+.header img {
+  width: 5rem;
+  height: 5rem;
+  object-fit: contain;
+  background-color: transparent;
+}
+
+.header h1 {
+  font-size: 1.5rem;
+}
