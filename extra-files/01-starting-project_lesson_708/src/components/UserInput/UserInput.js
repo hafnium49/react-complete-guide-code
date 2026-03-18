@@ -61,9 +61,16 @@ const UserInput = (props) => {
       (`[input]: value`) to overwrite only the specific input that triggered this change event.
     */
     setUserInput((prevInput) => {
+      /*
+        TUTOR'S GUIDANCE:
+        "Type Conversion (String to Number)"
+        Because input values pulled from DOM elements are inherently strings, 
+        adding the '+' operator here guarantees Javascript interprets our inputted
+        text strictly as digits. This prevents string-concatenation bugs down the line!
+      */
       return {
         ...prevInput,
-        [input]: value,
+        [input]: +value, 
       };
     });
   };
