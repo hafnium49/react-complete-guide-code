@@ -1,28 +1,41 @@
-import React from 'react';
+import React, { useState } from 'react';
 
-/*
-  TUTOR'S GUIDANCE:
-  Welcome to our second practice project! 
-  Unlike the Investment Calculator, this starting project is COMPLETELY empty. 
-  This is highly intentional! The goal of this section is to practice building a React 
-  application strictly from the ground up, utilizing everything you've learned so far.
+import AddUser from './components/Users/AddUser';
+import UsersList from './components/Users/UsersList';
 
-  PROJECT BLUEPRINT (From Lesson 717):
-  1. We need an application that accepts a "Username" and an "Age".
-  2. We must build core components to accept this input (e.g., an `AddUser` component).
-  3. We must implement proper State Management to track the inputted data.
-  4. Once validated (i.e. Age > 0 and fields aren't empty), the user must be added 
-     to a dynamic list that renders below the form.
-  5. Conditional Rendering: If a user submits an empty form or invalid age, we must 
-     conditionally render an "Error Modal" overlay blocking the screen until they 
-     click the backdrop or an "Okay" button.
-
-  Good luck! Our solution will unfold step-by-step in the upcoming lessons.
-*/
 function App() {
+  /*
+    TUTOR'S GUIDANCE:
+    "Application Master State"
+    Here is our root index of registered users natively storing the application state!
+    Since the list evaluates out as empty initially `[]`, our `UsersList` map iterator 
+    components and conditional rendering routines won't throw startup errors!
+  */
+  const [usersList, setUsersList] = useState([]);
+
+  /*
+    TUTOR'S GUIDANCE:
+    "Handling Lifted State Data"
+    Once `<AddUser>` strictly completes its local verification logic (stripping bad ages or 
+    empty username inputs), it fires data safely back upwards into `addUserHandler()`. 
+    
+    Using the previous parameter injection strategy `(prevUsersList) =>`, we isolate and explode 
+    `...prevUsersList` then concatenate newly generated generic IDs and mapped data without physically 
+    mutating original states!
+  */
+  const addUserHandler = (uName, uAge) => {
+    setUsersList((prevUsersList) => {
+      return [
+        ...prevUsersList,
+        { name: uName, age: uAge, id: Math.random().toString() },
+      ];
+    });
+  };
+
   return (
     <div>
-
+      <AddUser onAddUser={addUserHandler} />
+      <UsersList users={usersList} />
     </div>
   );
 }
