@@ -74,6 +74,17 @@ function App() {
           initialInvestment={userInput['current-savings']} 
         />
       )}
+
+      {/* 
+        TUTOR'S GUIDANCE:
+        Congratulations, you have wrapped up the Investment Calculator demo! 
+        As outlined in our course roadmap, the concepts practiced here (Component Splitting, 
+        State Lifting, and Conditional Output) will serve as crucial stepping stones.
+        
+        Our next practice project will escalate these challenges where we build a 
+        dynamic "User Directory" app complete with Error Modal Overlays and strict 
+        input validation algorithms. Let's start with a fresh slate!
+      */}
     </div>
   );
 }
