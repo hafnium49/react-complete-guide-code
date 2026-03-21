@@ -6,18 +6,16 @@ import classes from './ErrorModal.module.css';
 
 /*
   TUTOR'S GUIDANCE:
-  "Conditional Layouts & Modal Positioning"
-  We utilize two completely independent divs here dynamically intercepting the DOM rendering! 
-  
-  The invisible `backdrop` intercepts uncontrolled background clicking (we map `onClick` directly 
-  so that it physically closes the modal when you accidentally misclick outside the primary alert box).
-  Our embedded `<Card className={classes.modal}>` functions as our beautiful CSS framework floating 
-  dynamically over the disabled UI content underneath!
+  "Adjacent JSX Container Fix"
+  As the tutor explains, React compiler natively expects ONE root node returned structurally.
+  You cannot write `<div className={classes.backdrop} />` next to `<Card />` natively because they 
+  would be adjacent siblings! Here, we solve it temporarily by mapping everything entirely inside 
+  a single `<div>` block!
 */
 const ErrorModal = (props) => {
   return (
     <div>
-      <div className={classes.backdrop} onClick={props.onConfirm} />
+      <div className={classes.backdrop} />
       <Card className={classes.modal}>
         <header className={classes.header}>
           <h2>{props.title}</h2>
@@ -26,7 +24,7 @@ const ErrorModal = (props) => {
           <p>{props.message}</p>
         </div>
         <footer className={classes.actions}>
-          <Button onClick={props.onConfirm}>Okay</Button>
+          <Button>Okay</Button>
         </footer>
       </Card>
     </div>
