@@ -4,9 +4,13 @@ import classes from './Button.module.css';
 /*
   TUTOR'S GUIDANCE:
   "Wrapper Components"
-  We proxy our custom button mapping into the native DOM element. Note how we establish 
-  a fallback type: `props.type || 'button'`. This prevents the `<button>` from accidentally 
-  reloaded forms if a user forgets to assign it!
+  Similar to our custom Card component, this button is a reusable layout wrapper 
+  designed to apply a standardized style across our entire application uniformly!
+  
+  Notice how we elegantly proxy external parameters down to the built-in HTML `<button>` 
+  node. By evaluating `props.type || 'button'`, we natively protect the component 
+  from accidentally reloading pages on click if a fellow developer forgets to pass 
+  a `type` flag during rendering. We also map the universal onClick proxy prop downward.
 */
 const Button = (props) => {
   return (
