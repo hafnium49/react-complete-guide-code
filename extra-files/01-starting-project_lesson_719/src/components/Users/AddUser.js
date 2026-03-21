@@ -24,12 +24,33 @@ const AddUser = (props) => {
     
     /*
       TUTOR'S GUIDANCE:
-      "Capturing Output Data"
-      Without doing any advanced verification metrics or wiping the original component yet (which is explicitly
-      the homework required by the lesson prior to lecture 723), we simply pipe the two isolated user values 
-      directly together successfully into our browser's Javascript Console!
+      "Form Validations"
+      Before executing ANY real logic (or clearing fields), we apply basic guard clauses.
+      `.trim()` natively removes any accidental trailing/leading whitespace. If the lengths 
+      equate to `0` (meaning empty fields), we intentionally call `return;` which completely 
+      halts the function and throws away the submission gracefully!
     */
+    if (enteredUsername.trim().length === 0 || enteredAge.trim().length === 0) {
+      return;
+    }
+
+    /*
+      TUTOR'S GUIDANCE:
+      "Type Conversions"
+      Since `enteredAge` natively tracks data flowing out of an HTML element, it evaluates inherently 
+      as a literal Javascript String primitive. By writing `+enteredAge`, the unary prefix forces 
+      Javascript to mathematically cast the string as an undeniable integer before running the condition!
+    */
+    if (+enteredAge < 1) {
+      return;
+    }
+    
+    // Test logging (Soon this will be passed upwards via Props!)
     console.log(enteredUsername, enteredAge);
+
+    // Overwrite tracker states explicitly
+    setEnteredUsername('');
+    setEnteredAge('');
   };
 
   const usernameChangeHandler = (event) => {
@@ -45,10 +66,27 @@ const AddUser = (props) => {
     <Card className={classes.input}>
       <form onSubmit={addUserHandler}>
         <label htmlFor="username">Username</label>
-        <input id="username" type="text" onChange={usernameChangeHandler} />
+        {/*
+          TUTOR'S GUIDANCE:
+          "Two-Way Binding"
+          By physically defining `value={enteredUsername}`, we wire a pipeline pointing backwards.
+          Now your state doesn't just listen to the DOM, your DOM inherently listens to your State! 
+          When `addUserHandler` overrides the states to `''` blank layouts on success, the DOM clears natively!
+        */}
+        <input 
+          id="username" 
+          type="text" 
+          value={enteredUsername}
+          onChange={usernameChangeHandler} 
+        />
         
         <label htmlFor="age">Age (Years)</label>
-        <input id="age" type="number" onChange={ageChangeHandler} />
+        <input 
+          id="age" 
+          type="number" 
+          value={enteredAge}
+          onChange={ageChangeHandler} 
+        />
         
         <Button type="submit">Add User</Button>
       </form>
