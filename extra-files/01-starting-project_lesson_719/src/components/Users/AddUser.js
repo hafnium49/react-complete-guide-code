@@ -8,15 +8,37 @@ import classes from './AddUser.module.css';
 const AddUser = (props) => {
   const [enteredUsername, setEnteredUsername] = useState('');
   const [enteredAge, setEnteredAge] = useState('');
+  
+  /*
+    TUTOR'S GUIDANCE:
+    "Dynamic Component Rendering"
+    Because our initial state mapping is fundamentally completely empty (undefined), the `error` 
+    tracking object natively returns exactly as a 'Falsy' primitive initially.
+  */
+  const [error, setError] = useState();
 
   const addUserHandler = (event) => {
     event.preventDefault();
     
     if (enteredUsername.trim().length === 0 || enteredAge.trim().length === 0) {
+      /*
+        TUTOR'S GUIDANCE:
+        "Setting Complex State Objects"
+        Because we require both a Header text and a Paragraph text mapping out UI Modal gracefully, 
+        we must pack our configuration directly into a cohesive standard Javascript Object mapping!
+      */
+      setError({
+        title: 'Invalid input',
+        message: 'Please enter a valid name and age (non-empty values).'
+      });
       return;
     }
 
     if (+enteredAge < 1) {
+      setError({
+        title: 'Invalid age',
+        message: 'Please enter a valid age (> 0).'
+      });
       return;
     }
     
@@ -34,16 +56,32 @@ const AddUser = (props) => {
     setEnteredAge(event.target.value);
   };
 
+  /*
+    TUTOR'S GUIDANCE:
+    "Resetting Modal Flags"
+    When the user explicitly taps the generic 'Okay' Button or touches the transparent `.backdrop`, 
+    this unique module explicitly overrides your state map back into `null`, destroying the JSON configuration!
+  */
+  const errorHandler = () => {
+    setError(null);
+  };
+
   return (
     <div>
       {/*
         TUTOR'S GUIDANCE:
-        "Adjacent Components Logic"
-        Just like ErrorModal.js, `<ErrorModal />` and `<Card />` cannot exist structurally adjacent! 
-        They must be unified securely by a parent `<div>` mapping! Right now we hard-code the text, 
-        but in Lesson 727 we will begin rendering this dynamically exclusively when input errors spawn!
+        "Conditional JSX Execution"
+        If `error` is populated, it natively passes standard Javascript 'truthy' evaluations. Thus the specific 
+        `&&` condition evaluates and cleanly appends the `<ErrorModal />` right inside the DOM tree alongside 
+        your custom string props gracefully!
       */}
-      <ErrorModal title="An error occurred!" message="Something went wrong!" />
+      {error && (
+        <ErrorModal
+          title={error.title}
+          message={error.message}
+          onConfirm={errorHandler}
+        />
+      )}
       <Card className={classes.input}>
         <form onSubmit={addUserHandler}>
           <label htmlFor="username">Username</label>
