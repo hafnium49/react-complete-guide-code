@@ -45,8 +45,14 @@ const AddUser = (props) => {
       return;
     }
     
-    // Test logging (Soon this will be passed upwards via Props!)
-    console.log(enteredUsername, enteredAge);
+    /*
+      TUTOR'S GUIDANCE:
+      "Lifting State Upwards"
+      Instead of console logging the isolated strings, we intercept them and execute our
+      `onAddUser` prop! This effectively fires the internal parameters backwards, upwards through 
+      our component pipeline directly into `App.js` where the orchestrator component tracks everything globally.
+    */
+    props.onAddUser(enteredUsername, enteredAge);
 
     // Overwrite tracker states explicitly
     setEnteredUsername('');
