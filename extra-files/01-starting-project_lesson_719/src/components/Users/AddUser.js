@@ -8,7 +8,7 @@ import classes from './AddUser.module.css';
 const AddUser = (props) => {
   const [enteredUsername, setEnteredUsername] = useState('');
   const [enteredAge, setEnteredAge] = useState('');
-  
+
   /*
     TUTOR'S GUIDANCE:
     "Dynamic Component Rendering"
@@ -19,7 +19,7 @@ const AddUser = (props) => {
 
   const addUserHandler = (event) => {
     event.preventDefault();
-    
+
     if (enteredUsername.trim().length === 0 || enteredAge.trim().length === 0) {
       /*
         TUTOR'S GUIDANCE:
@@ -41,7 +41,7 @@ const AddUser = (props) => {
       });
       return;
     }
-    
+    console.log(enteredUsername, enteredAge);
     props.onAddUser(enteredUsername, enteredAge);
 
     setEnteredUsername('');
@@ -50,10 +50,12 @@ const AddUser = (props) => {
 
   const usernameChangeHandler = (event) => {
     setEnteredUsername(event.target.value);
+    // console.log(event.target.value);
   };
 
   const ageChangeHandler = (event) => {
     setEnteredAge(event.target.value);
+    // console.log(event.target.value);
   };
 
   /*
@@ -85,21 +87,21 @@ const AddUser = (props) => {
       <Card className={classes.input}>
         <form onSubmit={addUserHandler}>
           <label htmlFor="username">Username</label>
-          <input 
-            id="username" 
-            type="text" 
+          <input
+            id="username"
+            type="text"
             value={enteredUsername}
-            onChange={usernameChangeHandler} 
+            onChange={usernameChangeHandler}
           />
-          
+
           <label htmlFor="age">Age (Years)</label>
-          <input 
-            id="age" 
-            type="number" 
+          <input
+            id="age"
+            type="number"
             value={enteredAge}
-            onChange={ageChangeHandler} 
+            onChange={ageChangeHandler}
           />
-          
+
           <Button type="submit">Add User</Button>
         </form>
       </Card>
